@@ -4,10 +4,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAK
 
 target_include_directories(sokobox PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}
-    #${CMAKE_CURRENT_SOURCE_DIR}/animation
-    #${CMAKE_CURRENT_SOURCE_DIR}/game
-    #${CMAKE_CURRENT_SOURCE_DIR}/raylib
-    #${CMAKE_CURRENT_SOURCE_DIR}/utility
+    ${CMAKE_CURRENT_SOURCE_DIR}/view
+    ${CMAKE_CURRENT_SOURCE_DIR}/util
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${raylib_LIBRARIES}) #inipp)
