@@ -1,7 +1,6 @@
 #ifndef ATLASMGR_HPP_
 #define ATLASMGR_HPP_
 
-#include <vector>
 #include <raylib.h>
 #include "typedef.hpp"
 
@@ -9,16 +8,22 @@ class AtlasManager {
 private:
     const Texture2D atlas;
     const Vector2 bsize;
+    const usize sprites;
     const usize cols;
 
     inline Rectangle id_to_rect(usize id) const {
         return { (id % cols) * bsize.x, static_cast<f32>(id / cols) * bsize.y, bsize.x, bsize.y };
     }
 
+    inline usize max_sprites() const {
+        return atlas.width / bsize.x * atlas.height / bsize.y;
+    }
+
 public:
-    AtlasManager(const char* atlas_file, Vector2 base_size) 
+    AtlasManager(const char* atlas_file, Vector2 base_size, usize sprites = 0) 
         : atlas(LoadTexture(atlas_file)), 
-          bsize(base_size), 
+          bsize(base_size),
+          sprites((sprites == 0) ? max_sprites() : sprites), 
           cols(atlas.width / bsize.x) {}
 
     ~AtlasManager() { UnloadTexture(atlas); }
@@ -44,6 +49,8 @@ public:
             WHITE
         );
     }
+
+    inline usize count() const { return sprites; }
 };
 
 #endif
