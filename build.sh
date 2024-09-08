@@ -2,7 +2,7 @@
 
 set -e
 
-mkdir -p build bin
+mkdir -p build
 rsync -a static/ build/
 
 cd build

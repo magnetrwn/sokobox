@@ -10,4 +10,4 @@ target_include_directories(sokobox PRIVATE
     #${CMAKE_CURRENT_SOURCE_DIR}/utility
 )
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE ${raylib_LIBRARIES} inipp)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${raylib_LIBRARIES}) #inipp)
