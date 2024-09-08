@@ -2,6 +2,7 @@
 #define TYPEDEF_HPP_
 
 #include <cstdint>
+#include <raylib.h>
 
 typedef std::uint8_t u8;
 typedef std::uint16_t u16;
@@ -16,5 +17,8 @@ typedef std::int64_t i64;
 
 typedef float f32;
 typedef double f64;
+
+typedef Vector2 f32_2;
+typedef Rectangle f32_4;
 
 #endif
