@@ -33,13 +33,13 @@ int main() {
     AtlasManager graphics(GRAPHICS.c_str(), GRAPHICS_SZ);
     AtlasManager a_items(A_ITEMS.c_str(), A_ITEMS_SZ);
     AtlasManager s_items(S_ITEMS.c_str(), S_ITEMS_SZ);
-    AtlasManager player("static/res/player.png", PLAYER_SZ);
+    AtlasManager player(PLAYER.c_str(), PLAYER_SZ);
 
-    IsometricManager isometric;
-    isometric.with(graphics, { WINDOW_W / 2, TILES_SCALE / 4 }, TILES_SCALE / GRAPHICS_SZ);
-    isometric.with(a_items, { WINDOW_W / 2, TILES_SCALE / 4 }, TILES_SCALE / A_ITEMS_SZ);
-    isometric.with(s_items, { WINDOW_W / 2, TILES_SCALE / 4 }, TILES_SCALE / S_ITEMS_SZ);
-    isometric.with(player, { WINDOW_W / 2, TILES_SCALE / 4 }, TILES_SCALE / PLAYER_SZ);
+    IsometricManager isometric({ WINDOW_W / 2, TILES_SCALE / 4 });
+    isometric.with(graphics, TILES_SCALE / GRAPHICS_SZ);
+    isometric.with(a_items, TILES_SCALE / A_ITEMS_SZ);
+    isometric.with(s_items, TILES_SCALE / S_ITEMS_SZ);
+    isometric.with(player, TILES_SCALE / PLAYER_SZ);
 
     double event1_time = 0.0f;
     double event1_delay = 0.130f;
@@ -55,8 +55,8 @@ int main() {
 
         for (usize y = 0; y < 10; ++y)
             for (usize x = 0; x < 10; ++x)
-                if (x == 0 || y == 0 || x == 9 || y == 9) isometric.draw(0, a % 25, { static_cast<f32>(x), static_cast<f32>(y) });
-        // ((x + 1) ^ (y + a) ^ (y * x * (3 + a)))
+                isometric.draw(0, ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15, { static_cast<f32>(x), static_cast<f32>(y) });
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             ++a;
 
