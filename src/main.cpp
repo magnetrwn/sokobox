@@ -19,11 +19,13 @@ int main() {
     double event1_time = 0.0f;
     double event1_delay = 0.130f;
 
+    auto a = AtlasManager("static/res/graphics.png", { 18.0f, 18.0f });
+
     IsometricManager isometric;
-    isometric.with(AtlasManager("static/res/graphics.png", { 18.0f, 18.0f }), { 512, 0 }, 8.0f);
-    isometric.with(AtlasManager("static/res/a_items.png", { 32.0f, 32.0f }), { 512, 0 }, 4.5f);
-    isometric.with(AtlasManager("static/res/s_items.png", { 32.0f, 32.0f }), { 512, 0 }, 4.5f);
-    isometric.with(AtlasManager("static/res/player.png", { 32.0f, 32.0f }), { 512, 0 }, 4.5f);
+    isometric.with(a, { 512, 0 }, 144.0f / 18.0f);
+    //isometric.with(AtlasManager("static/res/a_items.png", { 32.0f, 32.0f }), { 512, 0 }, 144.0f / 32.0f);
+    //isometric.with(AtlasManager("static/res/s_items.png", { 32.0f, 32.0f }), { 512, 0 }, 144.0f / 32.0f);
+    //isometric.with(AtlasManager("static/res/player.png", { 32.0f, 32.0f }), { 512, 0 }, 144.0f / 32.0f);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
