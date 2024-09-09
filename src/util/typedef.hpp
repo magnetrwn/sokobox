@@ -2,6 +2,7 @@
 #define TYPEDEF_HPP_
 
 #include <cstdint>
+#include <limits>
 #include <raylib.h>
 
 typedef std::uint8_t u8;
@@ -20,5 +21,11 @@ typedef double f64;
 
 typedef Vector2 f32_2;
 typedef Rectangle f32_4;
+
+constexpr u8 U8MAX = std::numeric_limits<u8>::max();
+constexpr u16 U16MAX = std::numeric_limits<u16>::max();
+constexpr u32 U32MAX = std::numeric_limits<u32>::max();
+constexpr u64 U64MAX = std::numeric_limits<u64>::max();
+constexpr usize USIZEMAX = std::numeric_limits<usize>::max();
 
 #endif

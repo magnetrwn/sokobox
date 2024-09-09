@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "atlasmgr.hpp"
 #include "isomgr.hpp"
+#include "worldview.hpp"
 #include "util.hpp"
 
 int main() {
@@ -41,56 +42,48 @@ int main() {
     isometric.with(s_items, TILES_SCALE / S_ITEMS_SZ);
     isometric.with(player, TILES_SCALE / PLAYER_SZ);
 
+    WorldView worldview(10, 10, isometric);
+
+    // Edge boxes
+    for (usize i = 0; i < 10; ++i) {
+        worldview.set(0, i, WorldElement(0, 0));
+        worldview.set(i, 0, WorldElement(0, 0));
+        worldview.set(9, i, WorldElement(0, 0));
+        worldview.set(i, 9, WorldElement(0, 0));
+    }
+    
+    // Crates
+    worldview.set(4, 2, WorldElement(0, 15));
+    worldview.set(4, 3, WorldElement(0, 15));
+    worldview.set(6, 5, WorldElement(0, 15));
+
+    // Tall box on top of crate
+    worldview.set(5, 6, WorldElement(0, { 15, 19, WorldElement::NOT_SET, 14 }));
+
+    // Angled box
+    worldview.set(6, 6, WorldElement(0, 10));
+
+    // Heart and gold key
+    worldview.set(7, 1, WorldElement(1, 8, 6));
+    worldview.set(3, 5, WorldElement(1, 112, 8));
+
     double event1_time = 0.0f;
     double event1_delay = 0.125f;
-    usize heartt = 0;
-    usize goldkeyt = 0;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
 
-        if (GetTime() > event1_time + event1_delay) {
-            event1_time = GetTime();
-            heartt = (heartt + 1) % 6;
-            goldkeyt = (goldkeyt + 1) % 8;
-        }
-
-        for (f32 f = 0.0f; f < 9.01f; f += 1.0f) {
-            isometric.draw(0, 0, { 0.0f, f });
-            isometric.draw(0, 0, { f, 0.0f });
-        }
-
-        for (f32 f = 0.0f; f < 9.01f; f += 1.0f) {
-            isometric.draw(0, 0, { 9.0f, f });
-            isometric.draw(0, 0, { f, 9.0f });
-        }
-
-        // Remember to order draws in sorted order back to front, you can do back rows to front rows (diagonal rows)
-
-        isometric.draw(1, 112 + goldkeyt, { 3.0f, 5.0f });
-
-        isometric.draw(0, 15, { 4.0f, 2.0f });
-        isometric.draw(0, 15, { 4.0f, 3.0f });
-        isometric.draw(0, 15, { 6.0f, 5.0f });
-        isometric.draw(0, 15, { 5.0f, 6.0f });
-
-        isometric.draw(0, 14, { 2.0f, 3.0f });
-        isometric.draw(0, 19, { 4.0f, 5.0f });
-
-        isometric.draw(0, 10, { 6.0f, 6.0f });
-
-        isometric.draw(1, 8 + heartt, { 7.0f, 1.0f });
-
-        // ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15
-        
+        worldview.draw();
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
             isometric.update_pos(GetMouseDelta());
 
-        f32 mouse_wheel = GetMouseWheelMove();
-        if (mouse_wheel != 0.0f) {
-            isometric.update_scale(1.0f + mouse_wheel * 0.1f, { WINDOW_W / 2, WINDOW_H / 2 });
+        isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, { WINDOW_W / 2, WINDOW_H / 2 });
+
+        if (GetTime() > event1_time + event1_delay) {
+            event1_time = GetTime();
+            worldview.step();
         }
 
         EndDrawing();
@@ -101,3 +94,5 @@ int main() {
     CloseWindow();
     return 0;
 }
+
+        // ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15
