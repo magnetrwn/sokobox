@@ -83,34 +83,56 @@ int main() {
     worldview.set(pl_x, pl_y, WorldElement(3, 0, 4));
 
     double event1_time = 0.0f;
-    double event1_delay = 0.125f;
+    double event1_delay = 0.075f;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
 
-        if (IsKeyPressed(KEY_UP)) {
-            if (pl_y == 0) {
-                
-            } else {
+        if (!worldview.is_transition()) {
+            if (IsKeyDown(KEY_UP) and pl_y > 0) {
                 worldview.unset(pl_x, pl_y);
-                worldview.set(pl_x, --pl_y, WorldElement(3, 0, 4));
+                --pl_y;
+                worldview.transition(
+                    WorldTransition(f32_2{ static_cast<f32>(pl_x), static_cast<f32>(pl_y + 1) }, pl_x, pl_y, f32_2{ 0.0f, -0.25f }, 
+                    WorldElement(3, 4, 4), 
+                    WorldElement(3, 0, 4), 
+                    4)
+                );
             }
-        }
 
-        if (IsKeyPressed(KEY_DOWN)) {
-            worldview.unset(pl_x, pl_y);
-            worldview.set(pl_x, ++pl_y, WorldElement(3, 0, 4));
-        }
+            else if (IsKeyDown(KEY_DOWN) and pl_y < 9) {
+                worldview.unset(pl_x, pl_y);
+                ++pl_y;
+                worldview.transition(
+                    WorldTransition(f32_2{ static_cast<f32>(pl_x), static_cast<f32>(pl_y - 1) }, pl_x, pl_y, f32_2{ 0.0f, 0.25f }, 
+                    WorldElement(3, 4, 4), 
+                    WorldElement(3, 0, 4), 
+                    4)
+                );
+            }
 
-        if (IsKeyPressed(KEY_LEFT)) {
-            worldview.unset(pl_x, pl_y);
-            worldview.set(--pl_x, pl_y, WorldElement(3, 0, 4));
-        }
+            else if (IsKeyDown(KEY_LEFT) and pl_x > 0) {
+                worldview.unset(pl_x, pl_y);
+                --pl_x;
+                worldview.transition(
+                    WorldTransition(f32_2{ static_cast<f32>(pl_x + 1), static_cast<f32>(pl_y) }, pl_x, pl_y, f32_2{ -0.25f, 0.0f }, 
+                    WorldElement(3, 4, 4), 
+                    WorldElement(3, 0, 4), 
+                    4)
+                );
+            }
 
-        if (IsKeyPressed(KEY_RIGHT)) {
-            worldview.unset(pl_x, pl_y);
-            worldview.set(++pl_x, pl_y, WorldElement(3, 0, 4));
+            else if (IsKeyDown(KEY_RIGHT) and pl_x < 9) {
+                worldview.unset(pl_x, pl_y);
+                ++pl_x;
+                worldview.transition(
+                    WorldTransition(f32_2{ static_cast<f32>(pl_x - 1), static_cast<f32>(pl_y) }, pl_x, pl_y, f32_2{ 0.25f, 0.0f }, 
+                    WorldElement(3, 4, 4), 
+                    WorldElement(3, 0, 4), 
+                    4)
+                );
+            }
         }
 
         worldview.draw();
