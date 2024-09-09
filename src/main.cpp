@@ -35,15 +35,16 @@ int main() {
     AtlasManager s_items(S_ITEMS.c_str(), S_ITEMS_SZ);
     AtlasManager player(PLAYER.c_str(), PLAYER_SZ);
 
-    IsometricManager isometric({ WINDOW_W / 2, TILES_SCALE / 4 });
+    IsometricManager isometric(f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
     isometric.with(graphics, TILES_SCALE / GRAPHICS_SZ);
     isometric.with(a_items, TILES_SCALE / A_ITEMS_SZ);
     isometric.with(s_items, TILES_SCALE / S_ITEMS_SZ);
     isometric.with(player, TILES_SCALE / PLAYER_SZ);
 
     double event1_time = 0.0f;
-    double event1_delay = 0.130f;
-    usize a = 0;
+    double event1_delay = 0.125f;
+    usize heartt = 0;
+    usize goldkeyt = 0;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -51,19 +52,38 @@ int main() {
 
         if (GetTime() > event1_time + event1_delay) {
             event1_time = GetTime();
+            heartt = (heartt + 1) % 6;
+            goldkeyt = (goldkeyt + 1) % 8;
         }
 
-        for (usize y = 0; y < 10; ++y)
-            for (usize x = 0; x < 10; ++x)
-                isometric.draw(0, ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15, { static_cast<f32>(x), static_cast<f32>(y) });
+        for (f32 f = 0.0f; f < 9.01f; f += 1.0f) {
+            isometric.draw(0, 0, { 0.0f, f });
+            isometric.draw(0, 0, { f, 0.0f });
+        }
 
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            ++a;
+        for (f32 f = 0.0f; f < 9.01f; f += 1.0f) {
+            isometric.draw(0, 0, { 9.0f, f });
+            isometric.draw(0, 0, { f, 9.0f });
+        }
 
-        //graphics.draw(sprite1_id, { 0, 0, 8.0f, 8.0f });
-        /*a_items.draw(sprite2_id, { 144.0f, 0, 4.5f, 4.5f });
-        s_items.draw(sprite3_id, { 0, 144.0f, 4.5f, 4.5f });
-        player.draw(sprite4_id, { 144.0f, 144.0f, 4.5f, 4.5f });*/
+        isometric.draw(1, 112 + goldkeyt, { 3.0f, 5.0f });
+
+        isometric.draw(0, 15, { 4.0f, 2.0f });
+        isometric.draw(0, 15, { 4.0f, 3.0f });
+        isometric.draw(0, 15, { 6.0f, 5.0f });
+        isometric.draw(0, 15, { 5.0f, 6.0f });
+
+        isometric.draw(0, 14, { 2.0f, 3.0f });
+        isometric.draw(0, 19, { 4.0f, 5.0f });
+
+        isometric.draw(0, 10, { 6.0f, 6.0f });
+
+        isometric.draw(1, 8 + heartt, { 7.0f, 1.0f });
+
+        // ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15
+
+        //if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        //    ++a;
 
         EndDrawing();
     }
