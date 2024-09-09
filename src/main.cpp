@@ -78,7 +78,9 @@ int main() {
     worldview.set(7, 7, WorldElement(1, 72, 8));
 
     // Player
-    worldview.set(5, 7, WorldElement(3, 0, 4));
+    usize pl_x = 5;
+    usize pl_y = 7;
+    worldview.set(pl_x, pl_y, WorldElement(3, 0, 4));
 
     double event1_time = 0.0f;
     double event1_delay = 0.125f;
@@ -86,6 +88,30 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
+
+        if (IsKeyPressed(KEY_UP)) {
+            if (pl_y == 0) {
+                
+            } else {
+                worldview.unset(pl_x, pl_y);
+                worldview.set(pl_x, --pl_y, WorldElement(3, 0, 4));
+            }
+        }
+
+        if (IsKeyPressed(KEY_DOWN)) {
+            worldview.unset(pl_x, pl_y);
+            worldview.set(pl_x, ++pl_y, WorldElement(3, 0, 4));
+        }
+
+        if (IsKeyPressed(KEY_LEFT)) {
+            worldview.unset(pl_x, pl_y);
+            worldview.set(--pl_x, pl_y, WorldElement(3, 0, 4));
+        }
+
+        if (IsKeyPressed(KEY_RIGHT)) {
+            worldview.unset(pl_x, pl_y);
+            worldview.set(++pl_x, pl_y, WorldElement(3, 0, 4));
+        }
 
         worldview.draw();
 
