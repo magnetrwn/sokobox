@@ -23,6 +23,18 @@ struct WorldElement {
 
     WorldElement(u16 tileset, std::vector<u16> tile_idx, u16 animate_by = 0)
         : tileset(tileset), tile_idxs(tile_idx), animate_by(animate_by), anim_step(0) {}
+
+    inline bool operator==(const WorldElement& other) const {
+        return tileset == other.tileset and tile_idxs == other.tile_idxs;
+    }
+
+    inline bool operator!=(const WorldElement& other) const {
+        return !(*this == other);
+    }
+
+    inline bool empty() const {
+        return tile_idxs.size() == 0;
+    }
 };
 
 struct WorldTransition {
@@ -73,44 +85,8 @@ public:
     inline void clear() { std::fill(world.begin(), world.end(), WorldElement()); }
     inline void resize(usize w, usize h) { world.resize(w * h); }
 
-    inline void draw() const {
-        for (i64 y = 0; y < h; ++y) {
-            for (i64 x = 0; x < w; ++x) {
-                const WorldElement& elem = get(x, y);
-
-                for (i64 i = 0; i < elem.tile_idxs.size(); ++i)
-                    if (elem.tile_idxs[i] != WorldElement::NOT_SET)
-                        iso.draw(elem.tileset, elem.tile_idxs[i] + elem.anim_step, f32_2{ static_cast<f32>(x - i), static_cast<f32>(y - i) });
-                
-                // This is slow on lots of transitions, and glitches the graphics through when moving out of cover.
-                for (const WorldTransition& tran : trans)
-                    if (tran.end_x == x and tran.end_y == y)
-                        for (i64 i = 0; i < tran.elem.tile_idxs.size(); ++i)
-                            if (tran.elem.tile_idxs[i] != WorldElement::NOT_SET)
-                                iso.draw(tran.elem.tileset, tran.elem.tile_idxs[0] + tran.elem.anim_step, tran.position);
-            }
-        }
-    }
-
-    inline void step() {
-        for (WorldElement& elem : world) {
-            if (elem.animate_by == 0)
-                continue;
-
-            elem.anim_step = (elem.anim_step + 1) % elem.animate_by;
-        }
-
-        trans.erase(std::remove_if(trans.begin(), trans.end(), [this] (WorldTransition& tran) {
-            tran.position.x += tran.increment.x;
-            tran.position.y += tran.increment.y;
-            tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animate_by;
-            --tran.anim_steps_left;
-            bool cond = tran.anim_steps_left == 0;
-            if (cond and tran.on_end.tile_idxs.size() != 0)
-                set(tran.end_x, tran.end_y, tran.on_end);
-            return cond;
-        }), trans.end());
-    }
+    void draw() const; 
+    void step(); 
 };
 
 #endif

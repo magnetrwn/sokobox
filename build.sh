@@ -10,3 +10,6 @@ cmake ..
 make -j4
 
 mv compile_commands.json ../
+
+./sokobox
+cd ..

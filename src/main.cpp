@@ -3,6 +3,7 @@
 #include "isomgr.hpp"
 #include "worldview.hpp"
 #include "util.hpp"
+#include "playermgr.hpp"
 
 int main() {
     // [Settings.Window]
@@ -24,6 +25,9 @@ int main() {
     // [Settings.Isometric]
     const f32 TILES_SCALE = util::cfg_f32("Settings.Isometric", "TILES_SCALE");
 
+    const usize LEVEL_W = 10;
+    const usize LEVEL_H = 10;
+
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
         SetConfigFlags(FLAG_VSYNC_HINT);
@@ -31,25 +35,27 @@ int main() {
 
     {
 
-    AtlasManager graphics(GRAPHICS.c_str(), GRAPHICS_SZ);
-    AtlasManager a_items(A_ITEMS.c_str(), A_ITEMS_SZ);
-    AtlasManager s_items(S_ITEMS.c_str(), S_ITEMS_SZ);
-    AtlasManager player(PLAYER.c_str(), PLAYER_SZ);
+    AtlasManager atlas_graphics(GRAPHICS.c_str(), GRAPHICS_SZ);
+    AtlasManager atlas_animated(A_ITEMS.c_str(), A_ITEMS_SZ);
+    AtlasManager atlas_static(S_ITEMS.c_str(), S_ITEMS_SZ);
+    AtlasManager atlas_player(PLAYER.c_str(), PLAYER_SZ);
 
     IsometricManager isometric(f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
-    isometric.with(graphics, TILES_SCALE / GRAPHICS_SZ);
-    isometric.with(a_items, TILES_SCALE / A_ITEMS_SZ);
-    isometric.with(s_items, TILES_SCALE / S_ITEMS_SZ);
-    isometric.with(player, TILES_SCALE / PLAYER_SZ);
+    isometric.with(atlas_graphics, TILES_SCALE / GRAPHICS_SZ);
+    isometric.with(atlas_animated, TILES_SCALE / A_ITEMS_SZ);
+    isometric.with(atlas_static, TILES_SCALE / S_ITEMS_SZ);
+    isometric.with(atlas_player, TILES_SCALE / PLAYER_SZ);
 
-    WorldView worldview(10, 10, isometric);
+    WorldView worldview(LEVEL_W, LEVEL_H, isometric);
+
+    PlayerManager player_in(worldview);
 
     // Edge boxes
-    for (usize i = 0; i < 10; ++i) {
+    for (usize i = 0; i < LEVEL_W; ++i) {
         worldview.set(0, i, WorldElement(0, 0));
         worldview.set(i, 0, WorldElement(0, 0));
-        worldview.set(9, i, WorldElement(0, 0));
-        worldview.set(i, 9, WorldElement(0, 0));
+        worldview.set(LEVEL_W - 1, i, WorldElement(0, 0));
+        worldview.set(i, LEVEL_H - 1, WorldElement(0, 0));
     }
     
     // Crates
@@ -78,9 +84,7 @@ int main() {
     worldview.set(7, 7, WorldElement(1, 72, 8));
 
     // Player
-    usize pl_x = 5;
-    usize pl_y = 7;
-    worldview.set(pl_x, pl_y, WorldElement(3, 0, 4));
+    player_in.set(5, 7);
 
     double event1_time = 0.0f;
     double event1_delay = 0.075f;
@@ -89,58 +93,14 @@ int main() {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
 
-        if (!worldview.is_transition()) {
-            if (IsKeyDown(KEY_UP) and pl_y > 0) {
-                worldview.unset(pl_x, pl_y);
-                --pl_y;
-                worldview.transition(
-                    WorldTransition(f32_2{ static_cast<f32>(pl_x), static_cast<f32>(pl_y + 1) }, pl_x, pl_y, f32_2{ 0.0f, -0.25f }, 
-                    WorldElement(3, 4, 4), 
-                    WorldElement(3, 0, 4), 
-                    4)
-                );
-            }
-
-            else if (IsKeyDown(KEY_DOWN) and pl_y < 9) {
-                worldview.unset(pl_x, pl_y);
-                ++pl_y;
-                worldview.transition(
-                    WorldTransition(f32_2{ static_cast<f32>(pl_x), static_cast<f32>(pl_y - 1) }, pl_x, pl_y, f32_2{ 0.0f, 0.25f }, 
-                    WorldElement(3, 4, 4), 
-                    WorldElement(3, 0, 4), 
-                    4)
-                );
-            }
-
-            else if (IsKeyDown(KEY_LEFT) and pl_x > 0) {
-                worldview.unset(pl_x, pl_y);
-                --pl_x;
-                worldview.transition(
-                    WorldTransition(f32_2{ static_cast<f32>(pl_x + 1), static_cast<f32>(pl_y) }, pl_x, pl_y, f32_2{ -0.25f, 0.0f }, 
-                    WorldElement(3, 4, 4), 
-                    WorldElement(3, 0, 4), 
-                    4)
-                );
-            }
-
-            else if (IsKeyDown(KEY_RIGHT) and pl_x < 9) {
-                worldview.unset(pl_x, pl_y);
-                ++pl_x;
-                worldview.transition(
-                    WorldTransition(f32_2{ static_cast<f32>(pl_x - 1), static_cast<f32>(pl_y) }, pl_x, pl_y, f32_2{ 0.25f, 0.0f }, 
-                    WorldElement(3, 4, 4), 
-                    WorldElement(3, 0, 4), 
-                    4)
-                );
-            }
-        }
+        player_in.detect_player_action();
 
         worldview.draw();
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
             isometric.update_pos(GetMouseDelta());
 
-        isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, { WINDOW_W / 2, WINDOW_H / 2 });
+        isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, GetMousePosition());
 
         if (GetTime() > event1_time + event1_delay) {
             event1_time = GetTime();
