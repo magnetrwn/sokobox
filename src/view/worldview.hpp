@@ -44,11 +44,11 @@ public:
     inline void resize(usize w, usize h) { world.resize(w * h); }
 
     inline void draw() const {
-        for (usize y = 0; y < h; ++y)
-            for (usize x = 0; x < w; ++x) {
+        for (i64 y = 0; y < h; ++y)
+            for (i64 x = 0; x < w; ++x) {
                 const WorldElement& elem = get(x, y);
 
-                for (usize i = 0; i < elem.tile_idxs.size(); ++i)
+                for (i64 i = 0; i < elem.tile_idxs.size(); ++i)
                     if (elem.tile_idxs[i] != WorldElement::NOT_SET)
                         iso.draw(elem.tileset, elem.tile_idxs[i] + elem.anim_step, f32_2{ static_cast<f32>(x - i), static_cast<f32>(y - i) });
             }

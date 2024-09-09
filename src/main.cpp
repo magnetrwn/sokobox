@@ -60,12 +60,25 @@ int main() {
     // Tall box on top of crate
     worldview.set(5, 6, WorldElement(0, { 15, 19, WorldElement::NOT_SET, 14 }));
 
-    // Angled box
-    worldview.set(6, 6, WorldElement(0, 10));
+    // Stack of boxes
+    worldview.set(1, 7, WorldElement(0, { 9, 19, 9, 7 }));
 
-    // Heart and gold key
+    // Angled boxes
+    worldview.set(6, 6, WorldElement(0, 10));
+    worldview.set(1, 4, WorldElement(0, 11));
+
+    // Opened boxes
+    worldview.set(1, 1, WorldElement(0, 24));
+    worldview.set(1, 3, WorldElement(0, 24));
+    worldview.set(8, 2, WorldElement(0, 24));
+
+    // Animated objects
     worldview.set(7, 1, WorldElement(1, 8, 6));
     worldview.set(3, 5, WorldElement(1, 112, 8));
+    worldview.set(7, 7, WorldElement(1, 72, 8));
+
+    // Player
+    worldview.set(5, 7, WorldElement(3, 0, 4));
 
     double event1_time = 0.0f;
     double event1_delay = 0.125f;
