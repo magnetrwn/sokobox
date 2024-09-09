@@ -47,6 +47,7 @@ void PlayerManager::detect_player_action() {
 
             pl_x = next_pl_x;
             pl_y = next_pl_y;
+            break;
         }
     }
 }
