@@ -41,7 +41,15 @@ public:
         atlas.draw(sprite_idx, iso, tscale, tscale);
     }
 
-    inline void set_pos(f32_2 pos) { position = pos; }
+    inline void update_pos(f32_2 pos) { position = { position.x + pos.x, position.y + pos.y }; }
+
+    inline void update_scale(f32 scale, f32_2 center) {
+        position.x = center.x + (position.x - center.x) * scale;
+        position.y = center.y + (position.y - center.y) * scale;
+
+        for (IsometricAtlas& atlas : atlv)
+            atlas.tile_scale *= scale;
+    }
 };
 
 #endif

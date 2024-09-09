@@ -66,6 +66,8 @@ int main() {
             isometric.draw(0, 0, { f, 9.0f });
         }
 
+        // Remember to order draws in sorted order back to front, you can do back rows to front rows (diagonal rows)
+
         isometric.draw(1, 112 + goldkeyt, { 3.0f, 5.0f });
 
         isometric.draw(0, 15, { 4.0f, 2.0f });
@@ -81,9 +83,15 @@ int main() {
         isometric.draw(1, 8 + heartt, { 7.0f, 1.0f });
 
         // ((x + 1) ^ (y + a) ^ (y * x * (3 + a))) % 15
+        
 
-        //if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        //    ++a;
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+            isometric.update_pos(GetMouseDelta());
+
+        f32 mouse_wheel = GetMouseWheelMove();
+        if (mouse_wheel != 0.0f) {
+            isometric.update_scale(1.0f + mouse_wheel * 0.1f, { WINDOW_W / 2, WINDOW_H / 2 });
+        }
 
         EndDrawing();
     }
