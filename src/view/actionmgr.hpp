@@ -18,7 +18,7 @@ public:
     using El = WorldElement::WorldElementInit;
 
     ActionManager(WorldView& worldview) 
-        : STEPS(util::cfg_f32("Settings.Action", "ACTION_STEPS")),
+        : STEPS(util::cfg_f32("Settings.Timing", "ACTION_STEPS")),
           INV_STEPS(1.0f / static_cast<f32>(STEPS)),
           worldview(worldview),
           pl_idle(El::PLAYER_IDLE()),

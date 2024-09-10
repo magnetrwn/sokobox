@@ -26,13 +26,15 @@ void WorldView::draw() const {
         }
 }
 
-void WorldView::step() {
+void WorldView::step_animations() {
     for (WorldElement& elem : world) {
         if (elem.animation_steps == 0)
             continue;
         elem.anim_step = (elem.anim_step + 1) % elem.animation_steps;
     }
+}
 
+void WorldView::step_transitions() {
     trans.erase(std::remove_if(trans.begin(), trans.end(), [this] (WorldTransition& tran) {
         tran.position.x += tran.increment.x;
         tran.position.y += tran.increment.y;
@@ -44,4 +46,9 @@ void WorldView::step() {
             set(tran.end_x, tran.end_y, tran.on_end);
         return cond;
     }), trans.end());
+}
+
+void WorldView::step() {
+    step_animations();
+    step_transitions();
 }

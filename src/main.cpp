@@ -29,6 +29,10 @@ int main() {
     // [Settings.Isometric]
     const f32 TILES_SCALE = util::cfg_f32("Settings.Isometric", "TILES_SCALE");
 
+    // [Settings.Timing]
+    const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
+    const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
+
     const usize LEVEL_W = 10;
     const usize LEVEL_H = 10;
 
@@ -90,8 +94,11 @@ int main() {
     // Player
     player_in.set(5, 7);
 
-    double event1_time = 0.0f;
-    double event1_delay = 0.075f;
+    double anim_step_time = 0.0f;
+    double anim_step_delay = LOOP_ANIMATION_STEP_TRIG;
+
+    double tran_step_time = 0.0f;
+    double tran_step_delay = LOOP_TRANSITION_STEP_TRIG;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -106,9 +113,14 @@ int main() {
 
         isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, GetMousePosition());
 
-        if (GetTime() > event1_time + event1_delay) {
-            event1_time = GetTime();
-            worldview.step();
+        if (GetTime() > anim_step_time + anim_step_delay) {
+            anim_step_time = GetTime();
+            worldview.step_animations();
+        }
+
+        if (GetTime() > tran_step_time + tran_step_delay) {
+            tran_step_time = GetTime();
+            worldview.step_transitions();
         }
 
         EndDrawing();

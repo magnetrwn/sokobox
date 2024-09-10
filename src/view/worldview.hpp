@@ -119,6 +119,8 @@ public:
     inline void resize(usize w, usize h) { world.resize(w * h); }
 
     void draw() const; 
+    void step_animations();
+    void step_transitions();
     void step(); 
 };
 
