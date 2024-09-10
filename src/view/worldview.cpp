@@ -40,7 +40,7 @@ void WorldView::step() {
             tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animate_by;
         --tran.anim_steps_left;
         bool cond = tran.anim_steps_left == 0;
-        if (cond and tran.on_end.stacked_tiles.size() != 0)
+        if (cond and !tran.on_end.stacked_tiles.empty())
             set(tran.end_x, tran.end_y, tran.on_end);
         return cond;
     }), trans.end());

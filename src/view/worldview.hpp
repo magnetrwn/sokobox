@@ -24,6 +24,29 @@ struct WorldElement {
 
         WorldElementInit(u8 tileset, u8_a stacked_tiles, u8 animate_by = 0)
             : tileset(tileset), stacked_tiles(stacked_tiles), animate_by(animate_by) {}
+
+        static WorldElementInit MOVABLE_CRATE() {
+            return WorldElementInit(
+                util::cfg_usize("Resources.Tiledata", "MOVABLE_CRATE_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "MOVABLE_CRATE_INDEX")
+            );
+        }
+
+        static WorldElementInit PLAYER_IDLE() {
+            return WorldElementInit(
+                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_INDEX"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_STEPS")
+            );
+        }
+
+        static WorldElementInit PLAYER_MOVE() {
+            return WorldElementInit(
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_INDEX"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_STEPS")
+            );
+        }
     };
 
     u8_a stacked_tiles;

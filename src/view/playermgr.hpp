@@ -16,9 +16,9 @@ public:
 
     PlayerManager(WorldView& worldview) 
         : worldview(worldview),
-          pl_idle(El(3, 0, 4)),
-          pl_move(El(3, 4, 4)),
-          movable_crate(El(0, 15)) {}
+          pl_idle(El::PLAYER_IDLE()),
+          pl_move(El::PLAYER_MOVE()),
+          movable_crate(El::MOVABLE_CRATE()) {}
 
     inline void set(usize x, usize y) { pl_x = x; pl_y = y; worldview.set(pl_x, pl_y, pl_idle); }
     inline usize get_x() const { return pl_x; }
