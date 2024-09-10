@@ -6,6 +6,10 @@
 #include "playermgr.hpp"
 
 int main() {
+    using El = WorldElement::WorldElementInit;
+    constexpr static auto END = WorldElement::END;
+    constexpr static auto SKIP = WorldElement::SKIP;
+    
     // [Settings.Window]
     const f32 WINDOW_W = util::cfg_f32("Settings.Window", "WINDOW_W");
     const f32 WINDOW_H = util::cfg_f32("Settings.Window", "WINDOW_H");
@@ -52,36 +56,36 @@ int main() {
 
     // Edge boxes
     for (usize i = 0; i < LEVEL_W; ++i) {
-        worldview.set(0, i, WorldElement(0, 0));
-        worldview.set(i, 0, WorldElement(0, 0));
-        worldview.set(LEVEL_W - 1, i, WorldElement(0, 0));
-        worldview.set(i, LEVEL_H - 1, WorldElement(0, 0));
+        worldview.set(0, i, El(0, 0));
+        worldview.set(i, 0, El(0, 0));
+        worldview.set(LEVEL_W - 1, i, El(0, 0));
+        worldview.set(i, LEVEL_H - 1, El(0, 0));
     }
     
     // Crates
-    worldview.set(4, 2, WorldElement(0, 15));
-    worldview.set(4, 3, WorldElement(0, 15));
-    worldview.set(6, 5, WorldElement(0, 15));
+    worldview.set(4, 2, El(0, 15));
+    worldview.set(4, 3, El(0, 15));
+    worldview.set(6, 5, El(0, 15));
 
     // Tall box on top of crate
-    worldview.set(5, 6, WorldElement(0, { 15, 19, WorldElement::NOT_SET, 14 }));
+    worldview.set(5, 6, El(0, { 15, 19, SKIP, 14, END }));
 
     // Stack of boxes
-    worldview.set(1, 7, WorldElement(0, { 9, 19, 9, 7 }));
+    worldview.set(1, 7, El(0, { 9, 19, 9, 7, END }));
 
     // Angled boxes
-    worldview.set(6, 6, WorldElement(0, 10));
-    worldview.set(1, 4, WorldElement(0, 11));
+    worldview.set(6, 6, El(0, 10));
+    worldview.set(1, 4, El(0, 11));
 
     // Opened boxes
-    worldview.set(1, 1, WorldElement(0, 24));
-    worldview.set(1, 3, WorldElement(0, 24));
-    worldview.set(8, 2, WorldElement(0, 24));
+    worldview.set(1, 1, El(0, 24));
+    worldview.set(1, 3, El(0, 24));
+    worldview.set(8, 2, El(0, 24));
 
     // Animated objects
-    worldview.set(7, 1, WorldElement(1, 8, 6));
-    worldview.set(3, 5, WorldElement(1, 112, 8));
-    worldview.set(7, 7, WorldElement(1, 72, 8));
+    worldview.set(7, 1, El(1, 8, 6));
+    worldview.set(3, 5, El(1, 112, 8));
+    worldview.set(7, 7, El(1, 72, 8));
 
     // Player
     player_in.set(5, 7);

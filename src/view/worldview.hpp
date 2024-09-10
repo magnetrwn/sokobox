@@ -3,37 +3,46 @@
 
 #include <algorithm>
 #include <vector>
+#include <array>
 #include "isotf.hpp"
 #include "typedef.hpp"
+#include "util.hpp"
+
+using u8_a = std::array<u8, 13>;
 
 struct WorldElement {
-    constexpr static u16 NOT_SET = U16MAX;
+    constexpr static u8 END = U8MAX;
+    constexpr static u8 SKIP = U8MAX - 1;
 
-    u16 tileset;
-    u16 animate_by;
-    u16 anim_step;
-    std::vector<u16> tile_idxs; // They stack vertically in the order they are defined, 0 being the bottom.
+    struct WorldElementInit {
+        u8_a stacked_tiles;
+        u8 tileset;
+        u8 animate_by;
 
+        WorldElementInit(u8 tileset, u8 tile_idx, u8 animate_by = 0)
+            : tileset(tileset), stacked_tiles({ tile_idx, END }), animate_by(animate_by) {}
+
+        WorldElementInit(u8 tileset, u8_a stacked_tiles, u8 animate_by = 0)
+            : tileset(tileset), stacked_tiles(stacked_tiles), animate_by(animate_by) {}
+    };
+
+    u8_a stacked_tiles;
+    u8 tileset;
+    u8 animate_by;
+    u8 anim_step;
+    
     WorldElement() 
-        : tileset(0), tile_idxs({}), animate_by(0), anim_step(0) {}
-
-    WorldElement(u16 tileset, u16 tile_idx, u16 animate_by = 0)
-        : tileset(tileset), tile_idxs({ tile_idx }), animate_by(animate_by), anim_step(0) {}
-
-    WorldElement(u16 tileset, std::vector<u16> tile_idx, u16 animate_by = 0)
-        : tileset(tileset), tile_idxs(tile_idx), animate_by(animate_by), anim_step(0) {}
+        : tileset(0), stacked_tiles({ END }), animate_by(0), anim_step(0) {}
+        
+    WorldElement(const WorldElementInit& init)
+        : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animate_by(init.animate_by), anim_step(0) {}
 
     inline bool operator==(const WorldElement& other) const {
-        return tileset == other.tileset and tile_idxs == other.tile_idxs;
+        return tileset == other.tileset and stacked_tiles == other.stacked_tiles;
     }
 
-    inline bool operator!=(const WorldElement& other) const {
-        return !(*this == other);
-    }
-
-    inline bool empty() const {
-        return tile_idxs.size() == 0;
-    }
+    inline bool operator!=(const WorldElement& other) const { return !(*this == other); }
+    inline bool empty() const { return stacked_tiles[0] == END; }
 };
 
 struct WorldTransition {
@@ -42,15 +51,15 @@ struct WorldTransition {
     usize end_x, end_y;
     f32_2 start, position;
     f32_2 increment;
-    u16 anim_steps_left;
+    u8 anim_steps_left;
 
     // Careful: this doesn't care about end coordinates, it's just stepping in the direction of the increment!
     WorldTransition(f32_2 start_pos, 
                     usize target_x, usize target_y, 
                     f32_2 move_increment, 
                     const WorldElement& transition_elem, 
-                    const WorldElement& final_elem = WorldElement(), 
-                    u16 animation_steps = 8)
+                    const WorldElement& final_elem,      // WorldElement() for none.
+                    u8 animation_steps)
         : start(start_pos), 
           end_x(target_x), 
           end_y(target_y), 
@@ -67,6 +76,8 @@ private:
     std::vector<WorldTransition> trans;
     usize w, h;
     IsometricTf& iso;
+
+    void draw_tile_stack(const WorldElement& elem, f32_2 position) const;
 
 public:
     WorldView(usize width, usize height, IsometricTf& iso) : w(width), h(height), iso(iso), world(width * height) {}

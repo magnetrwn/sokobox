@@ -1,22 +1,29 @@
 #include "worldview.hpp"
 
+constexpr static auto END = WorldElement::END;
+constexpr static auto SKIP = WorldElement::SKIP;
+
+void WorldView::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
+    for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
+        if (elem.stacked_tiles[i] != SKIP)
+            iso.draw(
+                elem.tileset, 
+                elem.stacked_tiles[i] + elem.anim_step, 
+                { position.x - static_cast<f32>(i), position.y - static_cast<f32>(i) }
+            );
+}
+
 void WorldView::draw() const {
-    for (i64 y = 0; y < h; ++y) {
+    for (i64 y = 0; y < h; ++y)
         for (i64 x = 0; x < w; ++x) {
             const WorldElement& elem = get(x, y);
 
-            for (i64 i = 0; i < elem.tile_idxs.size(); ++i)
-                if (elem.tile_idxs[i] != WorldElement::NOT_SET)
-                    iso.draw(elem.tileset, elem.tile_idxs[i] + elem.anim_step, f32_2{ static_cast<f32>(x - i), static_cast<f32>(y - i) });
+            draw_tile_stack(elem, f32_2{ static_cast<f32>(x), static_cast<f32>(y) });
             
-            // This is slow on lots of transitions, and glitches the graphics through when moving out of cover.
             for (const WorldTransition& tran : trans)
                 if (tran.end_x == x and tran.end_y == y)
-                    for (i64 i = 0; i < tran.elem.tile_idxs.size(); ++i)
-                        if (tran.elem.tile_idxs[i] != WorldElement::NOT_SET)
-                            iso.draw(tran.elem.tileset, tran.elem.tile_idxs[0] + tran.elem.anim_step, tran.position);
+                    draw_tile_stack(tran.elem, tran.position);
         }
-    }
 }
 
 void WorldView::step() {
@@ -33,7 +40,7 @@ void WorldView::step() {
             tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animate_by;
         --tran.anim_steps_left;
         bool cond = tran.anim_steps_left == 0;
-        if (cond and tran.on_end.tile_idxs.size() != 0)
+        if (cond and tran.on_end.stacked_tiles.size() != 0)
             set(tran.end_x, tran.end_y, tran.on_end);
         return cond;
     }), trans.end());
