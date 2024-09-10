@@ -33,8 +33,8 @@ int main() {
     const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
     const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
 
-    const usize LEVEL_W = 10;
-    const usize LEVEL_H = 10;
+    const usize LEVEL_W = 1000;
+    const usize LEVEL_H = 1000;
 
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
@@ -48,7 +48,7 @@ int main() {
     Atlas atlas_static(S_ITEMS.c_str(), S_ITEMS_SZ);
     Atlas atlas_player(PLAYER.c_str(), PLAYER_SZ);
 
-    IsometricTf isometric(f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
+    IsometricTf isometric(f32_2{ WINDOW_W, WINDOW_H }, f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
     isometric.with(atlas_graphics, TILES_SCALE / GRAPHICS_SZ);
     isometric.with(atlas_animated, TILES_SCALE / A_ITEMS_SZ);
     isometric.with(atlas_static, TILES_SCALE / S_ITEMS_SZ);
@@ -67,7 +67,7 @@ int main() {
     }
     
     // Crates
-    worldview.set(4, 2, El(0, 15));
+    /*worldview.set(4, 2, El(0, 15));
     worldview.set(4, 3, El(0, 15));
     worldview.set(6, 5, El(0, 15));
 
@@ -89,9 +89,39 @@ int main() {
     // Animated objects
     worldview.set(7, 1, El(1, 8, 6));
     worldview.set(3, 5, El(1, 112, 8));
-    worldview.set(7, 7, El(1, 72, 8));
+    worldview.set(7, 7, El(1, 72, 8));*/
 
-    // Player
+    for (usize i = LEVEL_W + 1; i < LEVEL_W * LEVEL_H - LEVEL_W - 1; ++i) {
+        i32 rnd = util::randi(0, 5);
+        if (rnd != 0 or i % LEVEL_W == 0 or i % LEVEL_W == LEVEL_W - 1)
+            continue;
+
+        if (i % 6 == 0) {
+            worldview.set(i % LEVEL_W, i / LEVEL_H, El(0, 8));
+            continue;
+        }
+        
+        rnd = util::randi(-1, 24);
+        if (rnd != -1 and rnd != 19 and rnd != 14) {
+            worldview.set(i % LEVEL_W, i / LEVEL_H, El(0, rnd));
+            continue;
+        }
+
+        if (rnd == 14 or rnd == 19) {
+            worldview.set(i % LEVEL_W, i / LEVEL_H, El(0, { 19, SKIP, 14, END }));
+            continue;
+        }
+
+        rnd = util::randi(-1, 5);
+        switch(rnd) {
+            case 0: worldview.set(i % LEVEL_W, i / LEVEL_H, El(1, 8, 6)); break;
+            case 1: worldview.set(i % LEVEL_W, i / LEVEL_H, El(1, 112, 8)); break;
+            case 2: worldview.set(i % LEVEL_W, i / LEVEL_H, El(1, 72, 8)); break;
+            case 3: worldview.set(i % LEVEL_W, i / LEVEL_H, El(0, { 15, 19, SKIP, 14, END })); break;
+            case 4: worldview.set(i % LEVEL_W, i / LEVEL_H, El(0, { 9, 19, 9, 7, END })); break;
+        }
+    }
+
     player_in.set(5, 7);
 
     double anim_step_time = 0.0f;
@@ -113,12 +143,13 @@ int main() {
 
         isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, GetMousePosition());
 
-        if (GetTime() > anim_step_time + anim_step_delay) {
+        if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
             anim_step_time = GetTime();
             worldview.step_animations();
+            TraceLog(LOG_INFO, "FPS: %d", GetFPS());
         }
 
-        if (GetTime() > tran_step_time + tran_step_delay) {
+        if (GetTime() > tran_step_time + tran_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
             tran_step_time = GetTime();
             worldview.step_transitions();
         }

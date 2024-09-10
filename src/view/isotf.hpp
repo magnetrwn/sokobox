@@ -13,7 +13,7 @@ struct IsometricAtlas {
 class IsometricTf {
 private:
     std::vector<IsometricAtlas> atlv;
-    f32_2 position;
+    f32_2 viewport, position;
 
     inline f32_2 isometric(f32 x, f32 y, usize atlas_idx) const {
         const Atlas& atlas = atlv[atlas_idx].atlas;
@@ -25,7 +25,7 @@ private:
     }
 
 public:
-    IsometricTf(f32_2 position = { 0.0f, 0.0f }) : position(position) {}
+    IsometricTf(f32_2 viewport, f32_2 position = { 0.0f, 0.0f }) : viewport(viewport), position(position) {}
 
     inline usize with(Atlas& atlas, f32 tile_scale) {
         atlv.push_back({ atlas, tile_scale });
@@ -33,11 +33,14 @@ public:
     }
 
     inline void draw(usize atlas_idx, usize sprite_idx, f32_2 xy) const {
-        const Atlas& atlas = atlv[atlas_idx].atlas;
         const f32 tscale = atlv[atlas_idx].tile_scale;
+        const f32 cull = 16.0f * tscale;
         const f32_2 iso = isometric(tscale * xy.x, tscale * xy.y, atlas_idx);
-        
-        atlas.draw(sprite_idx, iso, tscale, tscale);
+
+        if (iso.x < -cull or iso.x > viewport.x + cull or iso.y < -cull or iso.y > viewport.y + cull)
+            return;
+
+        atlv[atlas_idx].atlas.draw(sprite_idx, iso, tscale, tscale);
     }
 
     inline void update_pos(f32_2 pos) { position = { position.x + pos.x, position.y + pos.y }; }
