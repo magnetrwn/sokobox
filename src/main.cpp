@@ -1,6 +1,6 @@
 #include <raylib.h>
-#include "atlasmgr.hpp"
-#include "isomgr.hpp"
+#include "atlas.hpp"
+#include "isotf.hpp"
 #include "worldview.hpp"
 #include "util.hpp"
 #include "playermgr.hpp"
@@ -35,12 +35,12 @@ int main() {
 
     {
 
-    AtlasManager atlas_graphics(GRAPHICS.c_str(), GRAPHICS_SZ);
-    AtlasManager atlas_animated(A_ITEMS.c_str(), A_ITEMS_SZ);
-    AtlasManager atlas_static(S_ITEMS.c_str(), S_ITEMS_SZ);
-    AtlasManager atlas_player(PLAYER.c_str(), PLAYER_SZ);
+    Atlas atlas_graphics(GRAPHICS.c_str(), GRAPHICS_SZ);
+    Atlas atlas_animated(A_ITEMS.c_str(), A_ITEMS_SZ);
+    Atlas atlas_static(S_ITEMS.c_str(), S_ITEMS_SZ);
+    Atlas atlas_player(PLAYER.c_str(), PLAYER_SZ);
 
-    IsometricManager isometric(f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
+    IsometricTf isometric(f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
     isometric.with(atlas_graphics, TILES_SCALE / GRAPHICS_SZ);
     isometric.with(atlas_animated, TILES_SCALE / A_ITEMS_SZ);
     isometric.with(atlas_static, TILES_SCALE / S_ITEMS_SZ);

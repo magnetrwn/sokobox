@@ -3,8 +3,7 @@
 
 #include <algorithm>
 #include <vector>
-#include <raylib.h>
-#include "isomgr.hpp"
+#include "isotf.hpp"
 #include "typedef.hpp"
 
 struct WorldElement {
@@ -67,10 +66,10 @@ private:
     std::vector<WorldElement> world;
     std::vector<WorldTransition> trans;
     usize w, h;
-    IsometricManager& iso;
+    IsometricTf& iso;
 
 public:
-    WorldView(usize width, usize height, IsometricManager& iso) : w(width), h(height), iso(iso), world(width * height) {}
+    WorldView(usize width, usize height, IsometricTf& iso) : w(width), h(height), iso(iso), world(width * height) {}
 
     inline void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
     inline void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
