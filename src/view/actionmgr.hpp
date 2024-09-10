@@ -5,8 +5,11 @@
 #include "typedef.hpp"
 #include "worldview.hpp"
 
-class PlayerManager {
+class ActionManager {
 private:
+    const usize STEPS;
+    const f32 INV_STEPS;
+
     WorldView& worldview;
     WorldElement pl_idle, pl_move, movable_crate;
     usize pl_x, pl_y;
@@ -14,8 +17,10 @@ private:
 public:
     using El = WorldElement::WorldElementInit;
 
-    PlayerManager(WorldView& worldview) 
-        : worldview(worldview),
+    ActionManager(WorldView& worldview) 
+        : STEPS(util::cfg_f32("Settings.Action", "ACTION_STEPS")),
+          INV_STEPS(1.0f / static_cast<f32>(STEPS)),
+          worldview(worldview),
           pl_idle(El::PLAYER_IDLE()),
           pl_move(El::PLAYER_MOVE()),
           movable_crate(El::MOVABLE_CRATE()) {}

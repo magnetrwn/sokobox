@@ -1,4 +1,4 @@
-#include "playermgr.hpp"
+#include "actionmgr.hpp"
 
 constexpr static i64 DIR_OFFSETS[4][2] = {
     { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 }
@@ -8,10 +8,7 @@ constexpr static KeyboardKey DIR_KEYS[4] = {
     KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
 };
 
-constexpr static usize STEPS = 5;
-constexpr static f32 INV_STEPS = 1.0f / static_cast<f32>(STEPS);
-
-void PlayerManager::detect_player_action() {
+void ActionManager::detect_player_action() {
     if (worldview.is_transition())
         return;
 

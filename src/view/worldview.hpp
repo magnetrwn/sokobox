@@ -17,13 +17,13 @@ struct WorldElement {
     struct WorldElementInit {
         u8_a stacked_tiles;
         u8 tileset;
-        u8 animate_by;
+        u8 animation_steps;
 
-        WorldElementInit(u8 tileset, u8 tile_idx, u8 animate_by = 0)
-            : tileset(tileset), stacked_tiles({ tile_idx, END }), animate_by(animate_by) {}
+        WorldElementInit(u8 tileset, u8 tile_idx, u8 animation_steps = 0)
+            : tileset(tileset), stacked_tiles({ tile_idx, END }), animation_steps(animation_steps) {}
 
-        WorldElementInit(u8 tileset, u8_a stacked_tiles, u8 animate_by = 0)
-            : tileset(tileset), stacked_tiles(stacked_tiles), animate_by(animate_by) {}
+        WorldElementInit(u8 tileset, u8_a stacked_tiles, u8 animation_steps = 0)
+            : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
 
         static WorldElementInit MOVABLE_CRATE() {
             return WorldElementInit(
@@ -51,14 +51,14 @@ struct WorldElement {
 
     u8_a stacked_tiles;
     u8 tileset;
-    u8 animate_by;
+    u8 animation_steps;
     u8 anim_step;
     
     WorldElement() 
-        : tileset(0), stacked_tiles({ END }), animate_by(0), anim_step(0) {}
+        : tileset(0), stacked_tiles({ END }), animation_steps(0), anim_step(0) {}
         
     WorldElement(const WorldElementInit& init)
-        : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animate_by(init.animate_by), anim_step(0) {}
+        : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animation_steps(init.animation_steps), anim_step(0) {}
 
     inline bool operator==(const WorldElement& other) const {
         return tileset == other.tileset and stacked_tiles == other.stacked_tiles;

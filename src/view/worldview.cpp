@@ -28,16 +28,16 @@ void WorldView::draw() const {
 
 void WorldView::step() {
     for (WorldElement& elem : world) {
-        if (elem.animate_by == 0)
+        if (elem.animation_steps == 0)
             continue;
-        elem.anim_step = (elem.anim_step + 1) % elem.animate_by;
+        elem.anim_step = (elem.anim_step + 1) % elem.animation_steps;
     }
 
     trans.erase(std::remove_if(trans.begin(), trans.end(), [this] (WorldTransition& tran) {
         tran.position.x += tran.increment.x;
         tran.position.y += tran.increment.y;
-        if (tran.elem.animate_by)
-            tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animate_by;
+        if (tran.elem.animation_steps)
+            tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animation_steps;
         --tran.anim_steps_left;
         bool cond = tran.anim_steps_left == 0;
         if (cond and !tran.on_end.stacked_tiles.empty())

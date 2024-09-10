@@ -3,7 +3,7 @@
 #include "isotf.hpp"
 #include "worldview.hpp"
 #include "util.hpp"
-#include "playermgr.hpp"
+#include "actionmgr.hpp"
 
 int main() {
     using El = WorldElement::WorldElementInit;
@@ -52,7 +52,7 @@ int main() {
 
     WorldView worldview(LEVEL_W, LEVEL_H, isometric);
 
-    PlayerManager player_in(worldview);
+    ActionManager player_in(worldview);
 
     // Edge boxes
     for (usize i = 0; i < LEVEL_W; ++i) {
