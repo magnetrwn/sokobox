@@ -8,21 +8,21 @@
 #include "typedef.hpp"
 #include "util.hpp"
 
-using u8_a = std::array<u8, 13>;
+using u8_13 = std::array<u8, 13>;
 
 struct WorldElement {
     constexpr static u8 END = U8MAX;
     constexpr static u8 SKIP = U8MAX - 1;
 
     struct WorldElementInit {
-        u8_a stacked_tiles;
+        u8_13 stacked_tiles;
         u8 tileset;
         u8 animation_steps;
 
         WorldElementInit(u8 tileset, u8 tile_idx, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles({ tile_idx, END }), animation_steps(animation_steps) {}
 
-        WorldElementInit(u8 tileset, u8_a stacked_tiles, u8 animation_steps = 0)
+        WorldElementInit(u8 tileset, u8_13 stacked_tiles, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
 
         static WorldElementInit MOVABLE_CRATE() {
@@ -49,7 +49,7 @@ struct WorldElement {
         }
     };
 
-    u8_a stacked_tiles;
+    u8_13 stacked_tiles;
     u8 tileset;
     u8 animation_steps;
     u8 anim_step;
@@ -91,12 +91,26 @@ struct WorldTransition {
           elem(transition_elem), 
           on_end(final_elem), 
           anim_steps_left(animation_steps) {}
+
+    WorldTransition()
+        : start(f32_2{ 0.0f, 0.0f }), 
+          end_x(0), 
+          end_y(0), 
+          position(f32_2{ 0.0f, 0.0f }), 
+          increment(f32_2{ 0.0f, 0.0f }), 
+          elem(), 
+          on_end(), 
+          anim_steps_left(0) {}
+
+    inline bool empty() const { return elem.empty(); }
+    inline void clear() { elem = WorldElement(); }
 };
 
 class WorldView {
 private:
     std::vector<WorldElement> world;
     std::vector<WorldTransition> trans;
+    WorldTransition player_transition;
     usize w, h;
     IsometricTf& iso;
 
@@ -107,9 +121,14 @@ public:
 
     inline void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
     inline void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
-    inline void transition(WorldTransition tran) { trans.push_back(tran); }
-    inline bool is_transition() const { return trans.size() != 0; }
+
+    inline void move_player(WorldTransition tran) { player_transition = tran; }
+    inline bool is_player_moving() const { return !player_transition.empty(); }
+    inline void move_tile(WorldTransition tran) { trans.push_back(tran); }
+    inline bool is_tile_moving() const { return trans.size() != 0; }
+
     inline WorldElement get(usize x, usize y) const { return world[y * w + x]; }
+    
     inline usize width() const { return w; }
     inline usize height() const { return h; }
     inline usize size() const { return world.size(); }

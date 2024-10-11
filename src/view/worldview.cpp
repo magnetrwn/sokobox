@@ -20,6 +20,9 @@ void WorldView::draw() const {
 
             draw_tile_stack(elem, f32_2{ static_cast<f32>(x), static_cast<f32>(y) });
             
+            if (player_transition.end_x == x and player_transition.end_y == y)
+                draw_tile_stack(player_transition.elem, player_transition.position);
+
             for (const WorldTransition& tran : trans)
                 if (tran.end_x == x and tran.end_y == y)
                     draw_tile_stack(tran.elem, tran.position);
@@ -46,6 +49,17 @@ void WorldView::step_transitions() {
             set(tran.end_x, tran.end_y, tran.on_end);
         return cond;
     }), trans.end());
+
+    if (player_transition.empty())
+        return;
+
+    player_transition.position.x += player_transition.increment.x;
+    player_transition.position.y += player_transition.increment.y;
+    player_transition.elem.anim_step = (player_transition.elem.anim_step + 1) % player_transition.elem.animation_steps;
+    if (--player_transition.anim_steps_left == 0) {
+        set(player_transition.end_x, player_transition.end_y, player_transition.on_end);
+        player_transition.clear();
+    }
 }
 
 void WorldView::step() {

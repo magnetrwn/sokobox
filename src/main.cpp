@@ -33,8 +33,8 @@ int main() {
     const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
     const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
 
-    const usize LEVEL_W = 1000;
-    const usize LEVEL_H = 1000;
+    const usize LEVEL_W = 700;
+    const usize LEVEL_H = 700;
 
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
@@ -59,12 +59,10 @@ int main() {
     ActionManager player_in(worldview);
 
     // Edge boxes
-    for (usize i = 0; i < LEVEL_W; ++i) {
-        worldview.set(0, i, El(0, 0));
-        worldview.set(i, 0, El(0, 0));
-        worldview.set(LEVEL_W - 1, i, El(0, 0));
-        worldview.set(i, LEVEL_H - 1, El(0, 0));
-    }
+    for (usize x = 0; x < LEVEL_W; ++x)
+        for (usize y = 0; y < LEVEL_H; ++y)
+            if (x == 0 or x == LEVEL_W - 1 or y == 0 or y == LEVEL_H - 1)
+                worldview.set(x, y, El(0, util::randi(0, 11)));
     
     // Crates
     /*worldview.set(4, 2, El(0, 15));
@@ -133,6 +131,10 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
+        DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 72, RAYWHITE);
+        DrawText("Move with arrow keys, use right shift to speed up,", WINDOW_W - 540, 18, 20, RAYWHITE);
+        DrawText("use the mouse to move and scroll to zoom.", WINDOW_W - 540, 38, 20, RAYWHITE);
+        DrawText("You can push crates, but not cardboard boxes!", WINDOW_W - 540, 58 + 6, 20, RAYWHITE);
 
         player_in.detect_player_action();
 
@@ -146,7 +148,6 @@ int main() {
         if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
             anim_step_time = GetTime();
             worldview.step_animations();
-            TraceLog(LOG_INFO, "FPS: %d", GetFPS());
         }
 
         if (GetTime() > tran_step_time + tran_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
