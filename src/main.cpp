@@ -132,10 +132,6 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
-        DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 72, RAYWHITE);
-        DrawText("Move with arrow keys, use right shift to speed up,", WINDOW_W - 540, 18, 20, RAYWHITE);
-        DrawText("use the mouse to move and scroll to zoom.", WINDOW_W - 540, 38, 20, RAYWHITE);
-        DrawText("You can push crates, but not cardboard boxes!", WINDOW_W - 540, 58 + 6, 20, RAYWHITE);
 
         player_in.detect_player_action();
         worldstate.draw();
@@ -156,6 +152,11 @@ int main() {
             tran_step_time = GetTime();
             worldstate.step_transitions();
         }
+
+        DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 72, RAYWHITE);
+        DrawText("Move with arrow keys, use right shift to speed up,", WINDOW_W - 540, 18, 20, RAYWHITE);
+        DrawText("use the mouse to move and scroll to zoom.", WINDOW_W - 540, 38, 20, RAYWHITE);
+        DrawText("You can push crates, but not cardboard boxes!", WINDOW_W - 540, 58 + 6, 20, RAYWHITE);
         
         EndDrawing();
     }

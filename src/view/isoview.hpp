@@ -4,7 +4,7 @@
 #include <vector>
 #include "typedef.hpp"
 #include "atlas.hpp"
-#include "linearcam.hpp"
+#include "smoothcam.hpp"
 
 struct IsometricAtlas {
     Atlas& atlas;
@@ -15,7 +15,7 @@ class IsometricView {
 private:
     std::vector<IsometricAtlas> atlv;
     f32_2 viewport, position;
-    LinearCamera camera;
+    SmoothCamera camera;
 
     inline f32_2 isometric(f32 x, f32 y, usize atlas_idx) const {
         const Atlas& atlas = atlv[atlas_idx].atlas;
