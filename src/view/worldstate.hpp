@@ -109,7 +109,7 @@ struct WorldTransition {
 class WorldState {
 private:
     std::vector<WorldElement> world;
-    std::vector<WorldTransition> trans;
+    std::vector<WorldTransition> tile_transitions;
     WorldTransition player_transition;
     usize w, h;
     IsometricView& iso;
@@ -125,8 +125,8 @@ public:
     inline void move_player(WorldTransition tran) { player_transition = tran; }
     inline bool is_player_moving() const { return !player_transition.empty(); }
     
-    inline void move_tile(WorldTransition tran) { trans.push_back(tran); }
-    inline bool is_tile_moving() const { return trans.size() != 0; }
+    inline void move_tile(WorldTransition tran) { tile_transitions.push_back(tran); }
+    inline bool is_tile_moving() const { return tile_transitions.size() != 0; }
 
     inline void move_camera(f32_2 pos) { iso.target_camera(pos); }
 
@@ -143,7 +143,6 @@ public:
     void draw() const; 
     void step_animations();
     void step_transitions();
-    void step(); 
 };
 
 #endif

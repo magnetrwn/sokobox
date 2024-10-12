@@ -6,7 +6,7 @@ constexpr static auto SKIP = WorldElement::SKIP;
 void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
     for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
         if (elem.stacked_tiles[i] != SKIP)
-            iso.draw(
+            iso.draw_tile(
                 elem.tileset, 
                 elem.stacked_tiles[i] + elem.anim_step, 
                 { position.x - static_cast<f32>(i), position.y - static_cast<f32>(i) }
@@ -23,7 +23,7 @@ void WorldState::draw() const {
             if (player_transition.end_x == x and player_transition.end_y == y)
                 draw_tile_stack(player_transition.elem, player_transition.position);
 
-            for (const WorldTransition& tran : trans)
+            for (const WorldTransition& tran : tile_transitions)
                 if (tran.end_x == x and tran.end_y == y)
                     draw_tile_stack(tran.elem, tran.position);
         }
@@ -38,7 +38,7 @@ void WorldState::step_animations() {
 }
 
 void WorldState::step_transitions() {
-    trans.erase(std::remove_if(trans.begin(), trans.end(), [this] (WorldTransition& tran) {
+    tile_transitions.erase(std::remove_if(tile_transitions.begin(), tile_transitions.end(), [this] (WorldTransition& tran) {
         tran.position.x += tran.increment.x;
         tran.position.y += tran.increment.y;
         if (tran.elem.animation_steps)
@@ -48,7 +48,7 @@ void WorldState::step_transitions() {
         if (cond and !tran.on_end.stacked_tiles.empty())
             set(tran.end_x, tran.end_y, tran.on_end);
         return cond;
-    }), trans.end());
+    }), tile_transitions.end());
 
     if (player_transition.empty())
         return;
@@ -60,9 +60,4 @@ void WorldState::step_transitions() {
         set(player_transition.end_x, player_transition.end_y, player_transition.on_end);
         player_transition.clear();
     }
-}
-
-void WorldState::step() {
-    step_animations();
-    step_transitions();
 }

@@ -25,7 +25,7 @@ public:
     inline void target(f32_2 pos) { target_pos = pos; }
 
     inline void step(f32 scale) { 
-        f32_2 diff = { target_pos.x - current_pos.x, target_pos.y - current_pos.y };
+        const f32_2 diff = { target_pos.x - current_pos.x, target_pos.y - current_pos.y };
         f32 dist2 = diff.x * diff.x + diff.y * diff.y;
 
         if (dist2 > OK_DIST) {

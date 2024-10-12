@@ -20,11 +20,10 @@ private:
     inline f32_2 isometric(f32 x, f32 y, usize atlas_idx) const {
         const f32_2 tsize = atlv[atlas_idx].atlas.tile_size();
         const f32 tscale = atlv[atlas_idx].tile_scale;
-
-        f32_2 iso;
-        iso.x = (x - y) * (tsize.x / 2.0f) - tscale * tsize.x / 2.0f;
-        iso.y = (x + y) * (tsize.y / 4.0f) - tscale * tsize.y / 4.0f;
-        return iso;
+        return {
+            (x - y) * (tsize.x / 2.0f) - tscale * tsize.x / 2.0f,
+            (x + y) * (tsize.y / 4.0f) - tscale * tsize.y / 4.0f
+        };
     }
 
 public:
@@ -38,7 +37,7 @@ public:
         return atlv.size() - 1;
     }
 
-    inline void draw(usize atlas_idx, usize sprite_idx, f32_2 xy) const {
+    inline void draw_tile(usize atlas_idx, usize sprite_idx, f32_2 xy) const {
         const f32 tscale = atlv[atlas_idx].tile_scale;
         const f32 cull = 16.0f * tscale;
 
@@ -50,6 +49,10 @@ public:
             return;
 
         atlv[atlas_idx].atlas.draw(sprite_idx, iso, tscale, tscale);
+    }
+
+    inline void draw_shadow(f32_2 xy) const {
+        
     }
 
     inline void update_pos(f32_2 pos) { position = { position.x + pos.x, position.y + pos.y }; }

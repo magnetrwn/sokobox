@@ -33,8 +33,8 @@ int main() {
     const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
     const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
 
-    const usize LEVEL_W = 700;
-    const usize LEVEL_H = 700;
+    const usize LEVEL_W = 250;
+    const usize LEVEL_H = 250;
 
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
