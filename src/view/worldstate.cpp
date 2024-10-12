@@ -1,9 +1,9 @@
-#include "worldview.hpp"
+#include "worldstate.hpp"
 
 constexpr static auto END = WorldElement::END;
 constexpr static auto SKIP = WorldElement::SKIP;
 
-void WorldView::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
+void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
     for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
         if (elem.stacked_tiles[i] != SKIP)
             iso.draw(
@@ -13,7 +13,7 @@ void WorldView::draw_tile_stack(const WorldElement& elem, f32_2 position) const 
             );
 }
 
-void WorldView::draw() const {
+void WorldState::draw() const {
     for (i64 y = 0; y < h; ++y)
         for (i64 x = 0; x < w; ++x) {
             const WorldElement& elem = get(x, y);
@@ -29,7 +29,7 @@ void WorldView::draw() const {
         }
 }
 
-void WorldView::step_animations() {
+void WorldState::step_animations() {
     for (WorldElement& elem : world) {
         if (elem.animation_steps == 0)
             continue;
@@ -37,7 +37,7 @@ void WorldView::step_animations() {
     }
 }
 
-void WorldView::step_transitions() {
+void WorldState::step_transitions() {
     trans.erase(std::remove_if(trans.begin(), trans.end(), [this] (WorldTransition& tran) {
         tran.position.x += tran.increment.x;
         tran.position.y += tran.increment.y;
@@ -62,7 +62,7 @@ void WorldView::step_transitions() {
     }
 }
 
-void WorldView::step() {
+void WorldState::step() {
     step_animations();
     step_transitions();
 }

@@ -9,18 +9,20 @@ constexpr static KeyboardKey DIR_KEYS[4] = {
 };
 
 void ActionManager::detect_player_action() {
-    if (worldview.is_player_moving())
+    if (worldstate.is_player_moving())
         return;
 
     for (usize i = 0; i < 4; ++i) {
         const usize next_pl_x = pl_x + DIR_OFFSETS[i][0];
         const usize next_pl_y = pl_y + DIR_OFFSETS[i][1];
 
-        if (IsKeyDown(DIR_KEYS[i]) and (worldview.get(next_pl_x, next_pl_y).empty() or worldview.get(next_pl_x, next_pl_y) == movable_crate)) {
-            if (worldview.get(next_pl_x, next_pl_y) == movable_crate) {
-                if (worldview.get(next_pl_x + DIR_OFFSETS[i][0], next_pl_y + DIR_OFFSETS[i][1]).empty()) {
-                    worldview.unset(next_pl_x, next_pl_y);
-                    worldview.move_tile(
+        if (IsKeyDown(DIR_KEYS[i]) and (worldstate.get(next_pl_x, next_pl_y).empty() or worldstate.get(next_pl_x, next_pl_y) == movable_crate)) {
+            worldstate.iso.target_camera(f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) });
+
+            if (worldstate.get(next_pl_x, next_pl_y) == movable_crate) {
+                if (worldstate.get(next_pl_x + DIR_OFFSETS[i][0], next_pl_y + DIR_OFFSETS[i][1]).empty()) {
+                    worldstate.unset(next_pl_x, next_pl_y);
+                    worldstate.move_tile(
                         WorldTransition(
                             f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) },
                             pl_x + static_cast<f32>(DIR_OFFSETS[i][0]) * 2, 
@@ -38,8 +40,8 @@ void ActionManager::detect_player_action() {
                     continue;
             }
 
-            worldview.unset(pl_x, pl_y);
-            worldview.move_player(
+            worldstate.unset(pl_x, pl_y);
+            worldstate.move_player(
                 WorldTransition(
                     f32_2{ static_cast<f32>(pl_x), static_cast<f32>(pl_y) }, 
                     next_pl_x, next_pl_y, 

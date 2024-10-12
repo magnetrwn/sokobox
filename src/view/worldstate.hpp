@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <array>
-#include "isotf.hpp"
+#include "isoview.hpp"
 #include "typedef.hpp"
 #include "util.hpp"
 
@@ -106,18 +106,20 @@ struct WorldTransition {
     inline void clear() { elem = WorldElement(); }
 };
 
-class WorldView {
+class WorldState {
 private:
     std::vector<WorldElement> world;
     std::vector<WorldTransition> trans;
     WorldTransition player_transition;
     usize w, h;
-    IsometricTf& iso;
 
     void draw_tile_stack(const WorldElement& elem, f32_2 position) const;
 
 public:
-    WorldView(usize width, usize height, IsometricTf& iso) : w(width), h(height), iso(iso), world(width * height) {}
+    /* TODO: put this back and make a setter for the camera. */
+      IsometricView& iso;
+
+    WorldState(usize width, usize height, IsometricView& iso) : w(width), h(height), iso(iso), world(width * height) {}
 
     inline void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
     inline void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
