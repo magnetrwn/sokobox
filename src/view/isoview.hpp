@@ -18,11 +18,12 @@ private:
     SmoothCamera camera;
 
     inline f32_2 isometric(f32 x, f32 y, usize atlas_idx) const {
-        const Atlas& atlas = atlv[atlas_idx].atlas;
+        const f32_2 tsize = atlv[atlas_idx].atlas.tile_size();
+        const f32 tscale = atlv[atlas_idx].tile_scale;
 
         f32_2 iso;
-        iso.x = (x - y) * (atlas.tile_size().x / 2.0f) - atlv[atlas_idx].tile_scale * atlas.tile_size().x / 2.0f;
-        iso.y = (x + y) * (atlas.tile_size().y / 4.0f) - atlv[atlas_idx].tile_scale * atlas.tile_size().y / 4.0f;
+        iso.x = (x - y) * (tsize.x / 2.0f) - tscale * tsize.x / 2.0f;
+        iso.y = (x + y) * (tsize.y / 4.0f) - tscale * tsize.y / 4.0f;
         return iso;
     }
 
@@ -54,10 +55,14 @@ public:
     inline void update_pos(f32_2 pos) { position = { position.x + pos.x, position.y + pos.y }; }
 
     inline void center_view_on(f32_2 pos, usize atlas_idx) {
+        const f32_2 tsize = atlv[atlas_idx].atlas.tile_size();
         const f32 tscale = atlv[atlas_idx].tile_scale;
         const f32_2 iso = isometric(tscale * pos.x, tscale * pos.y, atlas_idx);
 
-        position = { viewport.x / 2.0f - iso.x - 64.0f, viewport.y / 2.0f - iso.y - 64.0f };
+        position = { 
+            viewport.x / 2.0f - iso.x - tscale * tsize.x / 2.0f, 
+            viewport.y / 2.0f - iso.y - tscale * tsize.y / 2.0f
+        };
     }
 
     inline void update_scale(f32 scale, f32_2 center) {

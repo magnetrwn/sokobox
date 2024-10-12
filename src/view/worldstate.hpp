@@ -112,13 +112,11 @@ private:
     std::vector<WorldTransition> trans;
     WorldTransition player_transition;
     usize w, h;
+    IsometricView& iso;
 
     void draw_tile_stack(const WorldElement& elem, f32_2 position) const;
 
 public:
-    /* TODO: put this back and make a setter for the camera. */
-      IsometricView& iso;
-
     WorldState(usize width, usize height, IsometricView& iso) : w(width), h(height), iso(iso), world(width * height) {}
 
     inline void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
@@ -126,8 +124,11 @@ public:
 
     inline void move_player(WorldTransition tran) { player_transition = tran; }
     inline bool is_player_moving() const { return !player_transition.empty(); }
+    
     inline void move_tile(WorldTransition tran) { trans.push_back(tran); }
     inline bool is_tile_moving() const { return trans.size() != 0; }
+
+    inline void move_camera(f32_2 pos) { iso.target_camera(pos); }
 
     inline WorldElement get(usize x, usize y) const { return world[y * w + x]; }
     

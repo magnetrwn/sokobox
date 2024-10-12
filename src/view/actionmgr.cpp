@@ -17,7 +17,7 @@ void ActionManager::detect_player_action() {
         const usize next_pl_y = pl_y + DIR_OFFSETS[i][1];
 
         if (IsKeyDown(DIR_KEYS[i]) and (worldstate.get(next_pl_x, next_pl_y).empty() or worldstate.get(next_pl_x, next_pl_y) == movable_crate)) {
-            worldstate.iso.target_camera(f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) });
+            worldstate.move_camera(f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) });
 
             if (worldstate.get(next_pl_x, next_pl_y) == movable_crate) {
                 if (worldstate.get(next_pl_x + DIR_OFFSETS[i][0], next_pl_y + DIR_OFFSETS[i][1]).empty()) {

@@ -6,7 +6,7 @@
 
 class SmoothCamera {
 private:
-    const f32 SNAP_DIST;
+    const f32 OK_DIST;
     const f32 MAX_SPEED;
     const f32 DIST_SCALE;
     f32_2 current_pos;
@@ -14,7 +14,7 @@ private:
 
 public:
     SmoothCamera(f32_2 pos) 
-        : SNAP_DIST(util::cfg_f32("Settings.Camera", "CAMERA_SNAP_DIST2")),
+        : OK_DIST(util::cfg_f32("Settings.Camera", "CAMERA_OK_DIST2")),
           MAX_SPEED(util::cfg_f32("Settings.Camera", "CAMERA_MAX_SPEED")),
           DIST_SCALE(util::cfg_f32("Settings.Camera", "CAMERA_DIST_SCALE")),
           current_pos(pos), 
@@ -28,16 +28,10 @@ public:
         f32_2 diff = { target_pos.x - current_pos.x, target_pos.y - current_pos.y };
         f32 dist2 = diff.x * diff.x + diff.y * diff.y;
 
-        if (dist2 < SNAP_DIST)
-            current_pos = target_pos;
-
-        else {
+        if (dist2 > OK_DIST) {
             util::clamp_h(dist2, MAX_SPEED);
-
-            diff.x *= dist2 * DIST_SCALE;
-            diff.y *= dist2 * DIST_SCALE;
-            current_pos.x += diff.x * scale;
-            current_pos.y += diff.y * scale;
+            current_pos.x += diff.x * dist2 * DIST_SCALE * scale;
+            current_pos.y += diff.y * dist2 * DIST_SCALE * scale;
         }
     }
 };
