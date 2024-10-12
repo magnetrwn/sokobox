@@ -1,7 +1,6 @@
 #ifndef SMOOTHCAM_HPP_
 #define SMOOTHCAM_HPP_
 
-#include <cmath>
 #include "typedef.hpp"
 #include "util.hpp"
 
@@ -25,9 +24,7 @@ public:
     inline void set(f32_2 pos) { current_pos = pos; target_pos = pos; }
     inline void target(f32_2 pos) { target_pos = pos; }
 
-    // Moves the camera by a fixed amount per frame, scaled by delta time 'scale'
     inline void step(f32 scale) { 
-        // Calculate the vector difference between current and target positions
         f32_2 diff = { target_pos.x - current_pos.x, target_pos.y - current_pos.y };
         f32 dist2 = diff.x * diff.x + diff.y * diff.y;
 
