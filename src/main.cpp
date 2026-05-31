@@ -33,8 +33,8 @@ int main() {
     const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
     const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
 
-    const usize LEVEL_W = 250;
-    const usize LEVEL_H = 250;
+    const usize LEVEL_W = 40;
+    const usize LEVEL_H = 40;
 
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
@@ -49,10 +49,10 @@ int main() {
     Atlas atlas_player(PLAYER.c_str(), PLAYER_SZ);
 
     IsometricView isometric(f32_2{ WINDOW_W, WINDOW_H }, f32_2{ WINDOW_W / 2, TILES_SCALE / 4 });
-    isometric.with(atlas_graphics, TILES_SCALE / GRAPHICS_SZ);
-    isometric.with(atlas_animated, TILES_SCALE / A_ITEMS_SZ);
-    isometric.with(atlas_static, TILES_SCALE / S_ITEMS_SZ);
-    isometric.with(atlas_player, TILES_SCALE / PLAYER_SZ);
+    isometric.load(atlas_graphics, TILES_SCALE / GRAPHICS_SZ);
+    isometric.load(atlas_animated, TILES_SCALE / A_ITEMS_SZ);
+    isometric.load(atlas_static, TILES_SCALE / S_ITEMS_SZ);
+    isometric.load(atlas_player, TILES_SCALE / PLAYER_SZ);
 
     WorldState worldstate(LEVEL_W, LEVEL_H, isometric);
 

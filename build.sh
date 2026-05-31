@@ -6,8 +6,8 @@ mkdir -p build
 rsync -a static/ build/
 
 cd build
-cmake ..
-make -j4
+cmake -G "Unix Makefiles" ..
+make -j$(nproc)
 
 mv compile_commands.json ../
 

@@ -8,21 +8,21 @@
 #include "typedef.hpp"
 #include "util.hpp"
 
-using u8_13 = std::array<u8, 13>;
+using u8_8 = std::array<u8, 8>;
 
 struct WorldElement {
     constexpr static u8 END = U8MAX;
     constexpr static u8 SKIP = U8MAX - 1;
 
     struct WorldElementInit {
-        u8_13 stacked_tiles;
+        u8_8 stacked_tiles;
         u8 tileset;
         u8 animation_steps;
 
         WorldElementInit(u8 tileset, u8 tile_idx, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles({ tile_idx, END }), animation_steps(animation_steps) {}
 
-        WorldElementInit(u8 tileset, u8_13 stacked_tiles, u8 animation_steps = 0)
+        WorldElementInit(u8 tileset, u8_8 stacked_tiles, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
 
         static WorldElementInit MOVABLE_CRATE() {
@@ -49,7 +49,7 @@ struct WorldElement {
         }
     };
 
-    u8_13 stacked_tiles;
+    u8_8 stacked_tiles;
     u8 tileset;
     u8 animation_steps;
     u8 anim_step;

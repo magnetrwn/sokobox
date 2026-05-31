@@ -32,9 +32,20 @@ public:
           position(position), 
           camera(position) {}
 
-    inline usize with(Atlas& atlas, f32 tile_scale) {
+    inline usize load(Atlas& atlas, f32 tile_scale) {
         atlv.push_back({ atlas, tile_scale });
         return atlv.size() - 1;
+    }
+
+    inline bool is_cullable(usize atlas_idx, f32_2 xy) const {
+        const f32 tscale = atlv[atlas_idx].tile_scale;
+        const f32 cull = 16.0f * tscale;
+
+        f32_2 iso = isometric(tscale * xy.x, tscale * xy.y, atlas_idx);
+        iso.x += position.x;
+        iso.y += position.y;
+
+        return iso.x < -cull or iso.x > viewport.x + cull or iso.y < -cull or iso.y > viewport.y + cull;
     }
 
     inline void draw_tile(usize atlas_idx, usize sprite_idx, f32_2 xy) const {

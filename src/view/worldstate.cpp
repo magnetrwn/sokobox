@@ -14,17 +14,20 @@ void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const
 }
 
 void WorldState::draw() const {
-    for (i64 y = 0; y < h; ++y)
+    for (i64 sum = 0; sum < w + h - 1; ++sum)
         for (i64 x = 0; x < w; ++x) {
+            i64 y = sum - x;
+            if (y < 0 or y >= h)
+                continue;
             const WorldElement& elem = get(x, y);
 
             draw_tile_stack(elem, f32_2{ static_cast<f32>(x), static_cast<f32>(y) });
             
-            if (player_transition.end_x == x and player_transition.end_y == y)
+            if (static_cast<i64>(player_transition.position.x + 0.5f) == x and static_cast<i64>(player_transition.position.y + 0.5f) == y)
                 draw_tile_stack(player_transition.elem, player_transition.position);
 
             for (const WorldTransition& tran : tile_transitions)
-                if (tran.end_x == x and tran.end_y == y)
+                if (static_cast<i64>(tran.position.x + 0.5f) == x and static_cast<i64>(tran.position.y + 0.5f) == y)
                     draw_tile_stack(tran.elem, tran.position);
         }
 }
