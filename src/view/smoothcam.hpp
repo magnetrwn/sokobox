@@ -20,11 +20,11 @@ public:
           current_pos(pos), 
           target_pos(pos) {}
 
-    inline f32_2 get() const { return current_pos; }
-    inline void set(f32_2 pos) { current_pos = pos; target_pos = pos; }
-    inline void target(f32_2 pos) { target_pos = pos; }
+    f32_2 get() const { return current_pos; }
+    void set(f32_2 pos) { current_pos = pos; target_pos = pos; }
+    void target(f32_2 pos) { target_pos = pos; }
 
-    inline void step(f32 scale) { 
+    void step(f32 scale) { 
         const f32_2 diff = { target_pos.x - current_pos.x, target_pos.y - current_pos.y };
         f32 dist2 = diff.x * diff.x + diff.y * diff.y;
 

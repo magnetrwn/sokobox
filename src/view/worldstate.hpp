@@ -60,12 +60,12 @@ struct WorldElement {
     WorldElement(const WorldElementInit& init)
         : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animation_steps(init.animation_steps), anim_step(0) {}
 
-    inline bool operator==(const WorldElement& other) const {
+    bool operator==(const WorldElement& other) const {
         return tileset == other.tileset and stacked_tiles == other.stacked_tiles;
     }
 
-    inline bool operator!=(const WorldElement& other) const { return !(*this == other); }
-    inline bool empty() const { return stacked_tiles[0] == END; }
+    bool operator!=(const WorldElement& other) const { return !(*this == other); }
+    bool empty() const { return stacked_tiles[0] == END; }
 };
 
 struct WorldTransition {
@@ -102,8 +102,8 @@ struct WorldTransition {
           on_end(), 
           anim_steps_left(0) {}
 
-    inline bool empty() const { return elem.empty(); }
-    inline void clear() { elem = WorldElement(); }
+    bool empty() const { return elem.empty(); }
+    void clear() { elem = WorldElement(); }
 };
 
 class WorldState {
@@ -119,26 +119,26 @@ private:
 public:
     WorldState(usize width, usize height, IsometricView& iso) : w(width), h(height), iso(iso), world(width * height) {}
 
-    inline void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
-    inline void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
+    void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
+    void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
 
-    inline void move_player(WorldTransition tran) { player_transition = tran; }
-    inline bool is_player_moving() const { return !player_transition.empty(); }
+    void move_player(WorldTransition tran) { player_transition = tran; }
+    bool is_player_moving() const { return !player_transition.empty(); }
     
-    inline void move_tile(WorldTransition tran) { tile_transitions.push_back(tran); }
-    inline bool is_tile_moving() const { return tile_transitions.size() != 0; }
+    void move_tile(WorldTransition tran) { tile_transitions.push_back(tran); }
+    bool is_tile_moving() const { return tile_transitions.size() != 0; }
 
-    inline void move_camera(f32_2 pos) { iso.target_camera(pos); }
+    void move_camera(f32_2 pos) { iso.target_camera(pos); }
 
-    inline WorldElement get(usize x, usize y) const { return world[y * w + x]; }
+    WorldElement get(usize x, usize y) const { return world[y * w + x]; }
     
-    inline usize width() const { return w; }
-    inline usize height() const { return h; }
-    inline usize size() const { return world.size(); }
-    inline const WorldElement* data() const { return world.data(); }
-    inline WorldElement* data() { return world.data(); }
-    inline void clear() { std::fill(world.begin(), world.end(), WorldElement()); }
-    inline void resize(usize w, usize h) { world.resize(w * h); }
+    usize width() const { return w; }
+    usize height() const { return h; }
+    usize size() const { return world.size(); }
+    const WorldElement* data() const { return world.data(); }
+    WorldElement* data() { return world.data(); }
+    void clear() { std::fill(world.begin(), world.end(), WorldElement()); }
+    void resize(usize w, usize h) { world.resize(w * h); }
 
     void draw() const; 
     void step_animations();

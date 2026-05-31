@@ -25,9 +25,9 @@ public:
           pl_move(El::PLAYER_MOVE()),
           movable_crate(El::MOVABLE_CRATE()) {}
 
-    inline void set(usize x, usize y) { pl_x = x; pl_y = y; worldstate.set(pl_x, pl_y, pl_idle); }
-    inline usize get_x() const { return pl_x; }
-    inline usize get_y() const { return pl_y; }
+    void set(usize x, usize y) { pl_x = x; pl_y = y; worldstate.set(pl_x, pl_y, pl_idle); }
+    usize get_x() const { return pl_x; }
+    usize get_y() const { return pl_y; }
 
     void detect_player_action();
 };

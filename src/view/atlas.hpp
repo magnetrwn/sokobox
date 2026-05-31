@@ -11,11 +11,11 @@ private:
     const usize sprites;
     const usize cols;
 
-    inline f32_4 id_to_rect(usize id) const {
+    f32_4 id_to_rect(usize id) const {
         return { (id % cols) * tsize.x, static_cast<f32>(id / cols) * tsize.y, tsize.x, tsize.y };
     }
 
-    inline usize max_sprites() const {
+    usize max_sprites() const {
         return atlas.width / tsize.x * atlas.height / tsize.y;
     }
 
@@ -34,7 +34,7 @@ public:
 
     ~Atlas() { UnloadTexture(atlas); }
 
-    inline void draw(usize sprite_idx, f32_2 xy, f32 scale_x = 1.0f, f32 scale_y = 1.0f) const {
+    void draw(usize sprite_idx, f32_2 xy, f32 scale_x = 1.0f, f32 scale_y = 1.0f) const {
         DrawTexturePro(
             atlas, 
             id_to_rect(sprite_idx), 
@@ -45,7 +45,7 @@ public:
         );
     }
 
-    inline void draw(usize sprite_idx, f32_4 dest) const {
+    void draw(usize sprite_idx, f32_4 dest) const {
         DrawTexturePro(
             atlas, 
             id_to_rect(sprite_idx), 
@@ -56,8 +56,8 @@ public:
         );
     }
 
-    inline usize count() const { return sprites; }
-    inline f32_2 tile_size() const { return tsize; }
+    usize count() const { return sprites; }
+    f32_2 tile_size() const { return tsize; }
 };
 
 #endif

@@ -20,29 +20,29 @@ public:
     static f32 cfg_f32(const std::string& section, const std::string& key);
     static bool cfg_bool(const std::string& section, const std::string& key);
 
-    static inline f32 clamp_lh(f32& value, const f32 lowLimit, const f32 highLimit) {
+    static f32 clamp_lh(f32& value, const f32 lowLimit, const f32 highLimit) {
         f32 original = value;
         value = std::max(lowLimit, std::min(value, highLimit));
         return original - value;
     }
 
-    static inline f32 clamp_l(f32& value, const f32 lowLimit) {
+    static f32 clamp_l(f32& value, const f32 lowLimit) {
         f32 original = value;
         value = std::max(value, lowLimit);
         return original - value;
     }
 
-    static inline f32 clamp_h(f32& value, const f32 highLimit) {
+    static f32 clamp_h(f32& value, const f32 highLimit) {
         f32 original = value;
         value = std::min(value, highLimit);
         return original - value;
     }
 
-    inline static f32 randf() {
+    static f32 randf() {
         return static_cast<f32>(GetRandomValue(0, RAND_MAX)) / static_cast<f32>(RAND_MAX);
     }
 
-    inline static int randi(const int low, const int high) {
+    static int randi(const int low, const int high) {
         return GetRandomValue(low, high);
     }
 
