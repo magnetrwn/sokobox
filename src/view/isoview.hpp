@@ -37,33 +37,18 @@ public:
         };
     }
 
-    bool is_cullable(usize atlas_idx, f32_2 xy) const {
-        const f32 tscale = atlv[atlas_idx].tile_scale;
-        const f32 cull = 16.0f * tscale;
-
-        f32_2 iso = to_isometric(tscale * xy.x, tscale * xy.y, atlas_idx);
-        iso.x += position.x;
-        iso.y += position.y;
-
-        return iso.x < -cull or iso.x > viewport.x + cull or iso.y < -cull or iso.y > viewport.y + cull;
-    }
-
     void draw_tile(usize atlas_idx, usize sprite_idx, f32_2 xy) const {
         const f32 tscale = atlv[atlas_idx].tile_scale;
-        const f32 cull = 16.0f * tscale;
+        const f32_2 tsize = atlv[atlas_idx].atlas.tile_size();
 
         f32_2 iso = to_isometric(tscale * xy.x, tscale * xy.y, atlas_idx);
         iso.x += position.x;
         iso.y += position.y;
 
-        if (iso.x < -cull or iso.x > viewport.x + cull or iso.y < -cull or iso.y > viewport.y + cull)
+        if (iso.x < -(tscale * tsize.x) or iso.x > viewport.x + (tscale * tsize.x) or iso.y < -(tscale * tsize.y) or iso.y > viewport.y + (tscale * tsize.y))
             return;
 
         atlv[atlas_idx].atlas.draw(sprite_idx, iso, tscale, tscale);
-    }
-
-    void draw_shadow(f32_2 xy) const {
-        
     }
 
     void update_pos(f32_2 pos) { position = { position.x + pos.x, position.y + pos.y }; }

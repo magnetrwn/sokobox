@@ -40,11 +40,27 @@ struct WorldElement {
             );
         }
 
-        static WorldElementInit PLAYER_MOVE() {
+        static WorldElementInit PLAYER_MOVE_UP_RIGHT() {
             return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_INDEX"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_STEPS")
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_INDEX"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_STEPS")
+            );
+        }
+
+        static WorldElementInit PLAYER_MOVE_DOWN_LEFT() {
+            return WorldElementInit(
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_INDEX"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_STEPS")
+            );
+        }
+
+        static WorldElementInit PLAYER_MOVE_FAST() {
+            return WorldElementInit(
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_TILESET"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_INDEX"),
+                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_STEPS")
             );
         }
     };

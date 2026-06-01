@@ -11,7 +11,7 @@ private:
     const f32 INV_STEPS;
 
     WorldState& worldstate;
-    WorldElement pl_idle, pl_move, movable_crate;
+    WorldElement pl_idle, pl_move_up_right, pl_move_down_left, pl_move_fast, movable_crate;
     usize pl_x, pl_y;
 
 public:
@@ -22,7 +22,9 @@ public:
           INV_STEPS(1.0f / static_cast<f32>(STEPS)),
           worldstate(worldstate),
           pl_idle(El::PLAYER_IDLE()),
-          pl_move(El::PLAYER_MOVE()),
+          pl_move_up_right(El::PLAYER_MOVE_UP_RIGHT()),
+          pl_move_down_left(El::PLAYER_MOVE_DOWN_LEFT()),
+          pl_move_fast(El::PLAYER_MOVE_FAST()),
           movable_crate(El::MOVABLE_CRATE()) {}
 
     void set(usize x, usize y) { pl_x = x; pl_y = y; worldstate.set(pl_x, pl_y, pl_idle); }
