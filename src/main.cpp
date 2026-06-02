@@ -6,7 +6,6 @@
 #include "actionmgr.hpp"
 
 int main() {
-    using El = WorldElement::WorldElementInit;
     constexpr static auto END = WorldElement::END;
     constexpr static auto SKIP = WorldElement::SKIP;
     
@@ -31,10 +30,13 @@ int main() {
 
     // [Settings.Timing]
     const f32 LOOP_ANIMATION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_ANIMATION_STEP_TRIG");
-    const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");    
+    const f32 LOOP_TRANSITION_STEP_TRIG = util::cfg_f32("Settings.Timing", "LOOP_TRANSITION_STEP_TRIG");
 
-    const usize LEVEL_W = 40;
-    const usize LEVEL_H = 40;
+    // [Settings.Camera]
+    const f32 CAMERA_PAN_RESET_DELAY = util::cfg_f32("Settings.Camera", "CAMERA_PAN_RESET_DELAY");
+
+    const usize LEVEL_W = 60;
+    const usize LEVEL_H = 60;
 
     SetTargetFPS(WINDOW_FPS);
     if (WINDOW_VSYNC)
@@ -59,10 +61,24 @@ int main() {
     ActionManager player_in(worldstate);
 
     // Edge boxes
+    // for (usize x = 0; x < LEVEL_W; ++x)
+    //     for (usize y = 0; y < LEVEL_H; ++y)
+    //         if (x == 0 or x == LEVEL_W - 1 or y == 0 or y == LEVEL_H - 1)
+    //             worldstate.set(x, y, El(0, util::randi(0, 11)));
+
+    // Edge boxes (small borders)
     for (usize x = 0; x < LEVEL_W; ++x)
-        for (usize y = 0; y < LEVEL_H; ++y)
-            if (x == 0 or x == LEVEL_W - 1 or y == 0 or y == LEVEL_H - 1)
-                worldstate.set(x, y, El(0, util::randi(0, 11)));
+        worldstate.set(x, 0, El(0, 22));
+    for (usize y = 0; y < LEVEL_H; ++y)
+        worldstate.set(0, y, El(0, 23));
+    for (usize x = 0; x < LEVEL_W; ++x)
+        worldstate.set(x, LEVEL_H - 1, El(0, 28));
+    for (usize y = 0; y < LEVEL_H; ++y)
+        worldstate.set(LEVEL_W - 1, y, El(0, 29));
+    worldstate.set(0, 0, El(0, 24));
+    worldstate.set(0, LEVEL_H - 1, El(0, 30));
+    worldstate.set(LEVEL_W - 1, 0, El(0, 31));
+    worldstate.set(LEVEL_W - 1, LEVEL_H - 1, El(0, 25));
     
     // Crates
     /*worldstate.set(4, 2, El(0, 15));
@@ -89,6 +105,7 @@ int main() {
     worldstate.set(3, 5, El(1, 112, 8));
     worldstate.set(7, 7, El(1, 72, 8));*/
 
+    // Generate random level
     for (usize i = LEVEL_W + 1; i < LEVEL_W * LEVEL_H - LEVEL_W - 1; ++i) {
         i32 rnd = util::randi(0, 5);
         if (rnd != 0 or i % LEVEL_W == 0 or i % LEVEL_W == LEVEL_W - 1)
@@ -110,13 +127,14 @@ int main() {
             continue;
         }
 
-        rnd = util::randi(-1, 5);
+        rnd = util::randi(-1, 6);
         switch(rnd) {
             case 0: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 8, 6)); break;
             case 1: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 112, 8)); break;
             case 2: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 72, 8)); break;
             case 3: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, { 15, 19, SKIP, 14, END })); break;
             case 4: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, { 9, 19, 9, 7, END })); break;
+            default: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, util::randi(35, 54))); break;
         }
     }
 
@@ -129,18 +147,26 @@ int main() {
     double tran_step_time = 0.0f;
     double tran_step_delay = LOOP_TRANSITION_STEP_TRIG;
 
+    double camera_pan_reset_time = -CAMERA_PAN_RESET_DELAY;
+    double camera_pan_reset_delay = CAMERA_PAN_RESET_DELAY;
+
     while (!WindowShouldClose()) {
+        player_in.detect_player_action();
+
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
 
-        player_in.detect_player_action();
         worldstate.draw();
 
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            camera_pan_reset_time = GetTime();
             isometric.update_pos(GetMouseDelta());
-        else
-            isometric.step_camera(GetFrameTime() / 0.016f, 3);
+            // TODO: figure out how to properly pan the camera here, current impl only keeps the focus away for the delay then returns to player
+        } else if (GetTime() > camera_pan_reset_time + camera_pan_reset_delay) {
+            isometric.target_camera({static_cast<float>(player_in.get_x()), static_cast<float>(player_in.get_y())});
+        }
 
+        isometric.step_camera(GetFrameTime() / 0.016f, 3);
         isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, GetMousePosition());
 
         if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {

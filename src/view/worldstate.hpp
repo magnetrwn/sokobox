@@ -24,45 +24,6 @@ struct WorldElement {
 
         WorldElementInit(u8 tileset, u8_8 stacked_tiles, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
-
-        static WorldElementInit MOVABLE_CRATE() {
-            return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "MOVABLE_CRATE_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "MOVABLE_CRATE_INDEX")
-            );
-        }
-
-        static WorldElementInit PLAYER_IDLE() {
-            return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_INDEX"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_IDLE_STEPS")
-            );
-        }
-
-        static WorldElementInit PLAYER_MOVE_UP_RIGHT() {
-            return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_INDEX"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_UP_RIGHT_STEPS")
-            );
-        }
-
-        static WorldElementInit PLAYER_MOVE_DOWN_LEFT() {
-            return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_INDEX"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_DOWN_LEFT_STEPS")
-            );
-        }
-
-        static WorldElementInit PLAYER_MOVE_FAST() {
-            return WorldElementInit(
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_TILESET"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_INDEX"),
-                util::cfg_usize("Resources.Tiledata", "PLAYER_MOVE_FAST_STEPS")
-            );
-        }
     };
 
     u8_8 stacked_tiles;
@@ -144,8 +105,6 @@ public:
     void move_tile(WorldTransition tran) { tile_transitions.push_back(tran); }
     bool is_tile_moving() const { return tile_transitions.size() != 0; }
 
-    void move_camera(f32_2 pos) { iso.target_camera(pos); }
-
     WorldElement get(usize x, usize y) const { return world[y * w + x]; }
     
     usize width() const { return w; }
@@ -160,5 +119,7 @@ public:
     void step_animations();
     void step_transitions();
 };
+
+using El = WorldElement::WorldElementInit;
 
 #endif

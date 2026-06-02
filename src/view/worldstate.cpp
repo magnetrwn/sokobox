@@ -21,8 +21,8 @@ void WorldState::draw() const {
                 continue;
             const WorldElement& elem = get(x, y);
 
-            if (elem.stacked_tiles[0] == END)// and !iso.is_cullable(0, { static_cast<f32>(x), static_cast<f32>(y) }))
-                iso.draw_tile(0, 53, { static_cast<f32>(x), static_cast<f32>(y) });
+            // if (elem.stacked_tiles[0] == END)// and !iso.is_cullable(0, { static_cast<f32>(x), static_cast<f32>(y) }))
+            //     iso.draw_tile(0, 53, { static_cast<f32>(x), static_cast<f32>(y) });
 
             draw_tile_stack(elem, f32_2{ static_cast<f32>(x), static_cast<f32>(y) });
             
