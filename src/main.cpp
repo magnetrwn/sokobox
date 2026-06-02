@@ -162,7 +162,7 @@ int main() {
             camera_pan_reset_time = GetTime();
             isometric.update_pos(GetMouseDelta());
             // TODO: add sensitivity config option
-            isometric.update_camera({ (0.4f * GetMouseDelta().x + GetMouseDelta().y) * 0.08f, (GetMouseDelta().y - 0.4f * GetMouseDelta().x) * 0.08f }, 0);
+            isometric.update_camera({ (0.4f * GetMouseDelta().x + GetMouseDelta().y) * -0.04f, (GetMouseDelta().y - 0.4f * GetMouseDelta().x) * -0.04f }, 0);
         } else if (GetTime() > camera_pan_reset_time + camera_pan_reset_delay) {
             isometric.target_camera({static_cast<f32>(player_in.get_x()), static_cast<f32>(player_in.get_y())});
         }
