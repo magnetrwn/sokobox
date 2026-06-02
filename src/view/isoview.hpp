@@ -64,12 +64,15 @@ public:
         };
     }
 
-    void update_scale(f32 scale, f32_2 center) {
-        position.x = center.x + (position.x - center.x) * scale;
-        position.y = center.y + (position.y - center.y) * scale;
-
+    void update_scale(f32 scale, usize atlas_idx) {
         for (IsometricAtlas& atlas : atlv)
             atlas.tile_scale *= scale;
+        step_camera(scale, atlas_idx);
+    }
+
+    void update_camera(f32_2 pos, usize atlas_idx) { 
+        camera.set({ camera.get().x + pos.x, camera.get().y + pos.y });
+        step_camera(1.0f, atlas_idx);
     }
 
     void set_camera(f32_2 pos) { camera.set(pos); }

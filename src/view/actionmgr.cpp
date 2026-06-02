@@ -5,7 +5,7 @@ constexpr static i64 DIR_OFFSETS[4][2] = {
 };
 
 constexpr static KeyboardKey DIR_KEYS[4] = {
-    KEY_UP, KEY_RIGHT, KEY_LEFT, KEY_DOWN
+    KEY_W, KEY_D, KEY_A, KEY_S
 };
 
 void ActionManager::detect_player_action() {
@@ -47,7 +47,7 @@ void ActionManager::detect_player_action() {
                         static_cast<f32>(DIR_OFFSETS[i][0]) * INV_STEPS, 
                         static_cast<f32>(DIR_OFFSETS[i][1]) * INV_STEPS
                     }, 
-                    (IsKeyDown(KEY_RIGHT_SHIFT)) ? pl_move_fast : ((i < 2) ? pl_move_up_right : pl_move_down_left), pl_idle, STEPS
+                    (IsKeyDown(KEY_LEFT_SHIFT)) ? pl_move_fast : ((i < 2) ? pl_move_up_right : pl_move_down_left), pl_idle, STEPS
                 )
             );
 

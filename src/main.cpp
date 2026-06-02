@@ -141,14 +141,14 @@ int main() {
     player_in.set(5, 7);
     isometric.set_camera({ 5, 7 });
 
-    double anim_step_time = 0.0f;
-    double anim_step_delay = LOOP_ANIMATION_STEP_TRIG;
+    f64 anim_step_time = 0.0f;
+    f64 anim_step_delay = LOOP_ANIMATION_STEP_TRIG;
 
-    double tran_step_time = 0.0f;
-    double tran_step_delay = LOOP_TRANSITION_STEP_TRIG;
+    f64 tran_step_time = 0.0f;
+    f64 tran_step_delay = LOOP_TRANSITION_STEP_TRIG;
 
-    double camera_pan_reset_time = -CAMERA_PAN_RESET_DELAY;
-    double camera_pan_reset_delay = CAMERA_PAN_RESET_DELAY;
+    f64 camera_pan_reset_time = -CAMERA_PAN_RESET_DELAY;
+    f64 camera_pan_reset_delay = CAMERA_PAN_RESET_DELAY;
 
     while (!WindowShouldClose()) {
         player_in.detect_player_action();
@@ -161,28 +161,31 @@ int main() {
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             camera_pan_reset_time = GetTime();
             isometric.update_pos(GetMouseDelta());
-            // TODO: figure out how to properly pan the camera here, current impl only keeps the focus away for the delay then returns to player
+            // TODO: add sensitivity config option
+            isometric.update_camera({ (0.4f * GetMouseDelta().x + GetMouseDelta().y) * 0.08f, (GetMouseDelta().y - 0.4f * GetMouseDelta().x) * 0.08f }, 0);
         } else if (GetTime() > camera_pan_reset_time + camera_pan_reset_delay) {
-            isometric.target_camera({static_cast<float>(player_in.get_x()), static_cast<float>(player_in.get_y())});
+            isometric.target_camera({static_cast<f32>(player_in.get_x()), static_cast<f32>(player_in.get_y())});
         }
 
-        isometric.step_camera(GetFrameTime() / 0.016f, 3);
-        isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, GetMousePosition());
+        isometric.step_camera(GetFrameTime() / 0.016f, 0);
 
-        if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
+        if (GetMouseWheelMove()*GetMouseWheelMove() > 0.01f)
+            isometric.update_scale(1.0f + GetMouseWheelMove() * 0.1f, 0);
+
+        if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_LEFT_SHIFT) ? 0.5f : 1.0f)) {
             anim_step_time = GetTime();
             worldstate.step_animations();
         }
 
-        if (GetTime() > tran_step_time + tran_step_delay * (IsKeyDown(KEY_RIGHT_SHIFT) ? 0.5f : 1.0f)) {
+        if (GetTime() > tran_step_time + tran_step_delay * (IsKeyDown(KEY_LEFT_SHIFT) ? 0.5f : 1.0f)) {
             tran_step_time = GetTime();
             worldstate.step_transitions();
         }
 
-        DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 72, RAYWHITE);
-        DrawText("Move with arrow keys, use right shift to speed up,", WINDOW_W - 540, 18, 20, RAYWHITE);
-        DrawText("use the mouse to move and scroll to zoom.", WINDOW_W - 540, 38, 20, RAYWHITE);
-        DrawText("You can push crates, but not cardboard boxes!", WINDOW_W - 540, 58 + 6, 20, RAYWHITE);
+        DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 18, RAYWHITE);
+        // DrawText("Move with arrow keys, use right shift to speed up,", WINDOW_W - 540, 18, 20, RAYWHITE);
+        // DrawText("use the mouse to move and scroll to zoom.", WINDOW_W - 540, 38, 20, RAYWHITE);
+        // DrawText("You can push crates, but not cardboard boxes!", WINDOW_W - 540, 58 + 6, 20, RAYWHITE);
         
         EndDrawing();
     }
