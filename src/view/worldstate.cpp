@@ -7,8 +7,8 @@ void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const
     for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
         if (elem.stacked_tiles[i] != SKIP)
             iso.draw_tile(
-                elem.tileset, 
-                elem.stacked_tiles[i] + elem.anim_step, 
+                elem.tileset[i], 
+                elem.stacked_tiles[i] + elem.anim_step[i], 
                 { position.x - static_cast<f32>(i), position.y - static_cast<f32>(i) }
             );
 }
@@ -36,23 +36,28 @@ void WorldState::draw() const {
 }
 
 void WorldState::step_animations() {
-    for (WorldElement& elem : world) {
-        if (elem.animation_steps == 0)
-            continue;
-        elem.anim_step = (elem.anim_step + 1) % elem.animation_steps;
-    }
+    for (WorldElement& elem : world)
+        for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
+            if (elem.stacked_tiles[i] != SKIP) {
+                if (elem.animation_steps[i] == 0)
+                    continue;
+                elem.anim_step[i] = (elem.anim_step[i] + 1) % elem.animation_steps[i];
+            }
 }
 
 void WorldState::step_transitions() {
     for (WorldTransition& tran : tile_transitions) {
-        tran.position.x += tran.increment.x;
-        tran.position.y += tran.increment.y;
-        if (tran.elem.animation_steps)
-            tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animation_steps;
-        --tran.anim_steps_left;
+        for (i64 i = 0; i < tran.elem.stacked_tiles.size() and tran.elem.stacked_tiles[i] != END; ++i)
+            if (tran.elem.stacked_tiles[i] != SKIP) {
+                tran.position.x += tran.increment.x;
+                tran.position.y += tran.increment.y;
+                if (tran.elem.animation_steps[i])
+                    tran.elem.anim_step[i] = (tran.elem.anim_step[i] + 1) % tran.elem.animation_steps[i];
+                --tran.anim_steps_left;
 
-        if (tran.anim_steps_left == 0 and !tran.on_end.stacked_tiles.empty())
-            set(tran.end_x, tran.end_y, tran.on_end);
+                if (tran.anim_steps_left == 0 and !tran.on_end.stacked_tiles.empty())
+                    set(tran.end_x, tran.end_y, tran.on_end);
+        }
     }
 
     tile_transitions.erase(std::remove_if(tile_transitions.begin(), tile_transitions.end(), [this] (const WorldTransition& tran) {
@@ -64,7 +69,7 @@ void WorldState::step_transitions() {
 
     player_transition.position.x += player_transition.increment.x;
     player_transition.position.y += player_transition.increment.y;
-    player_transition.elem.anim_step = (player_transition.elem.anim_step + 1) % player_transition.elem.animation_steps;
+    player_transition.elem.anim_step[0] = (player_transition.elem.anim_step[0] + 1) % player_transition.elem.animation_steps[0];
     --player_transition.anim_steps_left;
     
     if (player_transition.anim_steps_left == 0) {

@@ -123,7 +123,7 @@ int main() {
         }
 
         if (rnd == 14 or rnd == 19) {
-            worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, { 19, SKIP, 14, END }));
+            worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0 }, { 19, SKIP, 14, END }));
             continue;
         }
 
@@ -132,8 +132,8 @@ int main() {
             case 0: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 8, 6)); break;
             case 1: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 112, 8)); break;
             case 2: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 72, 8)); break;
-            case 3: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, { 15, 19, SKIP, 14, END })); break;
-            case 4: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, { 9, 19, 9, 7, END })); break;
+            case 3: worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 15, 19, SKIP, 14, END })); break;
+            case 4: worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 9, 0, 9, 7, END })); break;
             default: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, util::randi(35, 54))); break;
         }
     }

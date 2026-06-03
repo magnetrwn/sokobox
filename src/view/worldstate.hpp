@@ -14,15 +14,17 @@ struct WorldElement {
     constexpr static u8 END = U8MAX;
     constexpr static u8 SKIP = U8MAX - 1;
 
+    // NOTE: only use stacked_tiles with SKIP and END for tile stack control, the other arrays depend on this one (second one in init list)
+    // TODO: refactor
     struct WorldElementInit {
         u8_8 stacked_tiles;
-        u8 tileset;
-        u8 animation_steps;
+        u8_8 tileset;
+        u8_8 animation_steps;
 
         WorldElementInit(u8 tileset, u8 tile_idx, u8 animation_steps = 0)
-            : tileset(tileset), stacked_tiles({ tile_idx, END }), animation_steps(animation_steps) {}
+            : tileset({ tileset }), stacked_tiles({ tile_idx, END }), animation_steps({ animation_steps }) {}
 
-        WorldElementInit(u8 tileset, u8_8 stacked_tiles, u8 animation_steps = 0)
+        WorldElementInit(u8_8 tileset, u8_8 stacked_tiles, u8_8 animation_steps = {0})
             : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
             
         static WorldElementInit MOVABLE_CRATE_RED()     { return WorldElementInit(0, 35); }
@@ -55,33 +57,49 @@ struct WorldElement {
         static WorldElementInit PLAYER_MOVE_FAST()      { return WorldElementInit(3, 12, 4); }
     };
 
-    u8_8 stacked_tiles;
-    u8 tileset;
-    u8 animation_steps;
-    u8 anim_step;
+    u8_8 stacked_tiles; // NOTE: only use stacked_tiles with SKIP and END for tile stack control, the other arrays depend on this one
+    u8_8 tileset;
+    u8_8 animation_steps;
+    u8_8 anim_step;
     
     WorldElement() 
-        : tileset(0), stacked_tiles({ END }), animation_steps(0), anim_step(0) {}
+        : stacked_tiles({ END }),
+          tileset({0}), animation_steps({0}), anim_step({0}) {}
         
     WorldElement(const WorldElementInit& init)
-        : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animation_steps(init.animation_steps), anim_step(0) {}
+        : stacked_tiles(init.stacked_tiles), 
+          tileset(init.tileset), animation_steps(init.animation_steps), anim_step({0}) {}
 
-    bool operator==(const WorldElement& other) const { return tileset == other.tileset and stacked_tiles == other.stacked_tiles; }
+    // TODO: turn to "in set" when refactoring to avoid magic
+    bool is_movable(usize idx = 0) const {
+        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_movable(idx+1))) and (
+            stacked_tiles[idx] == 35 or stacked_tiles[idx] == 36 or stacked_tiles[idx] == 37 or stacked_tiles[idx] == 38 or stacked_tiles[idx] == 39
+        ));
+    }
+
+    // TODO: turn to "in set" when refactoring to avoid magic
+    bool is_walkable(usize idx = 0) const {
+        return (tileset[idx] == 0 and stacked_tiles[idx+1] == END and (
+            stacked_tiles[idx] == 40 or stacked_tiles[idx] == 41 or stacked_tiles[idx] == 42 or stacked_tiles[idx] == 43 or stacked_tiles[idx] == 44 or
+            stacked_tiles[idx] == 50 or stacked_tiles[idx] == 51 or stacked_tiles[idx] == 52 or stacked_tiles[idx] == 53 or stacked_tiles[idx] == 54
+        ));
+    }
+
+    // void push(const WorldElement& other) {
+    //     for (i64 i = 0; i < stacked_tiles.size(); ++i) {
+    //         if (stacked_tiles[i] == END) {
+    //             stacked_tiles[i] = other.stacked_tiles[0];
+    //             return;
+    //         }
+    //     }
+    // }
+
+    bool operator==(const WorldElement& other) const { 
+        return tileset == other.tileset and stacked_tiles == other.stacked_tiles and animation_steps == other.animation_steps;
+    }
+    
     bool operator!=(const WorldElement& other) const { return !(*this == other); }
     bool empty() const { return stacked_tiles[0] == END; }
-
-    bool is_movable() const {
-        return (tileset == 0 and stacked_tiles[1] == END and (
-            stacked_tiles[0] == 35 or stacked_tiles[0] == 36 or stacked_tiles[0] == 37 or stacked_tiles[0] == 38 or stacked_tiles[0] == 39
-        ));
-    }
-
-    bool is_walkable() const {
-        return (tileset == 0 and stacked_tiles[1] == END and (
-            stacked_tiles[0] == 40 or stacked_tiles[0] == 41 or stacked_tiles[0] == 42 or stacked_tiles[0] == 43 or stacked_tiles[0] == 44 or
-            stacked_tiles[0] == 50 or stacked_tiles[0] == 51 or stacked_tiles[0] == 52 or stacked_tiles[0] == 53 or stacked_tiles[0] == 54
-        ));
-    }
 };
 
 struct WorldTransition {
