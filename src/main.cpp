@@ -139,6 +139,7 @@ int main() {
     }
 
     player_in.set(5, 7);
+    worldstate.set(5, 8, El(0, 39));
     isometric.set_camera({ 5, 7 });
 
     f64 anim_step_time = 0.0f;
@@ -151,7 +152,7 @@ int main() {
     f64 camera_pan_reset_delay = CAMERA_PAN_RESET_DELAY;
 
     while (!WindowShouldClose()) {
-        player_in.detect_player_action();
+        player_in.step();
 
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });

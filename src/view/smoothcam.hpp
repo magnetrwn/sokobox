@@ -14,9 +14,9 @@ private:
 
 public:
     SmoothCamera(f32_2 pos) 
-        : OK_DIST(util::cfg_f32("Settings.Camera", "CAMERA_OK_DIST2")),
-          MAX_SPEED(util::cfg_f32("Settings.Camera", "CAMERA_MAX_SPEED")),
-          DIST_SCALE(util::cfg_f32("Settings.Camera", "CAMERA_DIST_SCALE")),
+        : OK_DIST(0.05f),
+          MAX_SPEED(0.3f),
+          DIST_SCALE(0.06f),
           current_pos(pos), 
           target_pos(pos) {}
 

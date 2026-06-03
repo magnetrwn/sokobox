@@ -8,7 +8,7 @@ constexpr static KeyboardKey DIR_KEYS[4] = {
     KEY_W, KEY_D, KEY_A, KEY_S
 };
 
-void ActionManager::detect_player_action() {
+void ActionManager::step() {
     if (worldstate.is_player_moving())
         return;
 
@@ -16,8 +16,9 @@ void ActionManager::detect_player_action() {
         const usize next_pl_x = pl_x + DIR_OFFSETS[i][0];
         const usize next_pl_y = pl_y + DIR_OFFSETS[i][1];
 
-        if (IsKeyDown(DIR_KEYS[i]) and (worldstate.get(next_pl_x, next_pl_y).empty() or worldstate.get(next_pl_x, next_pl_y) == movable_crate)) {
-            if (worldstate.get(next_pl_x, next_pl_y) == movable_crate) {
+        WorldElement next_pl = worldstate.get(next_pl_x, next_pl_y);
+        if (IsKeyDown(DIR_KEYS[i]) and (next_pl.empty() or next_pl.is_movable())) {
+            if (next_pl.is_movable()) {
                 if (worldstate.get(next_pl_x + DIR_OFFSETS[i][0], next_pl_y + DIR_OFFSETS[i][1]).empty()) {
                     worldstate.unset(next_pl_x, next_pl_y);
                     worldstate.move_tile(
@@ -28,8 +29,10 @@ void ActionManager::detect_player_action() {
                             f32_2{ 
                                 static_cast<f32>(DIR_OFFSETS[i][0]) * INV_STEPS, 
                                 static_cast<f32>(DIR_OFFSETS[i][1]) * INV_STEPS 
-                            }, 
-                            movable_crate, movable_crate, STEPS
+                            },
+                            next_pl,
+                            next_pl,
+                            STEPS
                         )
                     );
                 }
@@ -47,7 +50,13 @@ void ActionManager::detect_player_action() {
                         static_cast<f32>(DIR_OFFSETS[i][0]) * INV_STEPS, 
                         static_cast<f32>(DIR_OFFSETS[i][1]) * INV_STEPS
                     }, 
-                    (IsKeyDown(KEY_LEFT_SHIFT)) ? pl_move_fast : ((i < 2) ? pl_move_up_right : pl_move_down_left), pl_idle, STEPS
+                    (IsKeyDown(KEY_LEFT_SHIFT)) 
+                        ? El::PLAYER_MOVE_FAST() 
+                        : ((i < 2) 
+                            ? El::PLAYER_MOVE_UP_RIGHT() 
+                            : El::PLAYER_MOVE_DOWN_LEFT()), 
+                    El::PLAYER_IDLE(), 
+                    STEPS
                 )
             );
 

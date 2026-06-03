@@ -24,6 +24,35 @@ struct WorldElement {
 
         WorldElementInit(u8 tileset, u8_8 stacked_tiles, u8 animation_steps = 0)
             : tileset(tileset), stacked_tiles(stacked_tiles), animation_steps(animation_steps) {}
+            
+        static WorldElementInit MOVABLE_CRATE_RED()     { return WorldElementInit(0, 35); }
+        static WorldElementInit MOVABLE_CRATE_GREEN()   { return WorldElementInit(0, 36); }
+        static WorldElementInit MOVABLE_CRATE_BLUE()    { return WorldElementInit(0, 37); }
+        static WorldElementInit MOVABLE_CRATE_YELLOW()  { return WorldElementInit(0, 38); }
+        static WorldElementInit MOVABLE_CRATE_BLANK()   { return WorldElementInit(0, 39); }
+
+        static WorldElementInit MOVABLE_CRATE_SHADOW_RED()    { return WorldElementInit(0, 40); }
+        static WorldElementInit MOVABLE_CRATE_SHADOW_GREEN()  { return WorldElementInit(0, 41); }
+        static WorldElementInit MOVABLE_CRATE_SHADOW_BLUE()   { return WorldElementInit(0, 42); }
+        static WorldElementInit MOVABLE_CRATE_SHADOW_YELLOW() { return WorldElementInit(0, 43); }
+        static WorldElementInit MOVABLE_CRATE_SHADOW_BLANK()  { return WorldElementInit(0, 44); }
+
+        static WorldElementInit METAL_GATE_CLOSED_RED()    { return WorldElementInit(0, 45); }
+        static WorldElementInit METAL_GATE_CLOSED_GREEN()  { return WorldElementInit(0, 46); }
+        static WorldElementInit METAL_GATE_CLOSED_BLUE()   { return WorldElementInit(0, 47); }
+        static WorldElementInit METAL_GATE_CLOSED_YELLOW() { return WorldElementInit(0, 48); }
+        static WorldElementInit METAL_GATE_CLOSED_BLANK()  { return WorldElementInit(0, 49); }
+
+        static WorldElementInit METAL_GATE_OPEN_RED()    { return WorldElementInit(0, 50); }
+        static WorldElementInit METAL_GATE_OPEN_GREEN()  { return WorldElementInit(0, 51); }
+        static WorldElementInit METAL_GATE_OPEN_BLUE()   { return WorldElementInit(0, 52); }
+        static WorldElementInit METAL_GATE_OPEN_YELLOW() { return WorldElementInit(0, 53); }
+        static WorldElementInit METAL_GATE_OPEN_BLANK()  { return WorldElementInit(0, 54); }
+
+        static WorldElementInit PLAYER_IDLE()           { return WorldElementInit(3, 0, 4); }
+        static WorldElementInit PLAYER_MOVE_UP_RIGHT()  { return WorldElementInit(3, 4, 4); }
+        static WorldElementInit PLAYER_MOVE_DOWN_LEFT() { return WorldElementInit(3, 8, 4); }
+        static WorldElementInit PLAYER_MOVE_FAST()      { return WorldElementInit(3, 12, 4); }
     };
 
     u8_8 stacked_tiles;
@@ -37,12 +66,22 @@ struct WorldElement {
     WorldElement(const WorldElementInit& init)
         : tileset(init.tileset), stacked_tiles(init.stacked_tiles), animation_steps(init.animation_steps), anim_step(0) {}
 
-    bool operator==(const WorldElement& other) const {
-        return tileset == other.tileset and stacked_tiles == other.stacked_tiles;
-    }
-
+    bool operator==(const WorldElement& other) const { return tileset == other.tileset and stacked_tiles == other.stacked_tiles; }
     bool operator!=(const WorldElement& other) const { return !(*this == other); }
     bool empty() const { return stacked_tiles[0] == END; }
+
+    bool is_movable() const {
+        return (tileset == 0 and stacked_tiles[1] == END and (
+            stacked_tiles[0] == 35 or stacked_tiles[0] == 36 or stacked_tiles[0] == 37 or stacked_tiles[0] == 38 or stacked_tiles[0] == 39
+        ));
+    }
+
+    bool is_walkable() const {
+        return (tileset == 0 and stacked_tiles[1] == END and (
+            stacked_tiles[0] == 40 or stacked_tiles[0] == 41 or stacked_tiles[0] == 42 or stacked_tiles[0] == 43 or stacked_tiles[0] == 44 or
+            stacked_tiles[0] == 50 or stacked_tiles[0] == 51 or stacked_tiles[0] == 52 or stacked_tiles[0] == 53 or stacked_tiles[0] == 54
+        ));
+    }
 };
 
 struct WorldTransition {
