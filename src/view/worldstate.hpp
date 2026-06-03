@@ -71,28 +71,79 @@ struct WorldElement {
           tileset(init.tileset), animation_steps(init.animation_steps), anim_step({0}) {}
 
     // TODO: turn to "in set" when refactoring to avoid magic
+    bool is_player(usize idx = 0) const {
+        return tileset[idx] == 3;
+    }
+
+    // TODO: turn to "in set" when refactoring to avoid magic
     bool is_movable(usize idx = 0) const {
-        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_movable(idx+1))) and (
+        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_player(idx+1))) and (
             stacked_tiles[idx] == 35 or stacked_tiles[idx] == 36 or stacked_tiles[idx] == 37 or stacked_tiles[idx] == 38 or stacked_tiles[idx] == 39
         ));
     }
 
     // TODO: turn to "in set" when refactoring to avoid magic
     bool is_walkable(usize idx = 0) const {
-        return (tileset[idx] == 0 and stacked_tiles[idx+1] == END and (
+        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_player(idx+1))) and (
             stacked_tiles[idx] == 40 or stacked_tiles[idx] == 41 or stacked_tiles[idx] == 42 or stacked_tiles[idx] == 43 or stacked_tiles[idx] == 44 or
             stacked_tiles[idx] == 50 or stacked_tiles[idx] == 51 or stacked_tiles[idx] == 52 or stacked_tiles[idx] == 53 or stacked_tiles[idx] == 54
         ));
     }
 
-    // void push(const WorldElement& other) {
-    //     for (i64 i = 0; i < stacked_tiles.size(); ++i) {
-    //         if (stacked_tiles[i] == END) {
-    //             stacked_tiles[i] = other.stacked_tiles[0];
-    //             return;
-    //         }
-    //     }
-    // }
+    void push_front(const WorldElement& other) {
+        if (stacked_tiles[stacked_tiles.size() - 1] == END)
+            stacked_tiles[stacked_tiles.size() - 2] = END;
+
+        for (i64 i = stacked_tiles.size() - 1; i > 0; --i) {
+            stacked_tiles[i] = stacked_tiles[i-1];
+            tileset[i] = tileset[i-1];
+            animation_steps[i] = animation_steps[i-1];
+            anim_step[i] = anim_step[i-1];
+        }
+
+        stacked_tiles[0] = other.stacked_tiles[0];
+        tileset[0] = other.tileset[0];
+        animation_steps[0] = other.animation_steps[0];
+        anim_step[0] = 0;
+    }
+
+    void pop_front() {
+        bool found_end = false;
+
+        for (i64 i = 0; i < stacked_tiles.size() - 1; ++i) {
+            stacked_tiles[i] = stacked_tiles[i+1];
+            tileset[i] = tileset[i+1];
+            animation_steps[i] = animation_steps[i+1];
+            anim_step[i] = anim_step[i+1];
+            found_end = found_end or stacked_tiles[i] == END;
+        }
+
+        if (!found_end)
+            stacked_tiles[0] = END;
+    }
+
+    void push_end(const WorldElement& other) {
+        for (i64 i = 0; i < stacked_tiles.size() - 1; ++i)
+            if (stacked_tiles[i] == END) {
+                stacked_tiles[i] = other.stacked_tiles[0];
+                tileset[i] = other.tileset[0];
+                animation_steps[i] = other.animation_steps[0];
+                anim_step[i] = 0;
+                if (i <= stacked_tiles.size() - 2)
+                    stacked_tiles[i+1] = END;
+                else
+                    stacked_tiles[i] = END;
+                return;
+            }
+    }
+
+    void pop_end() {
+        for (i64 i = stacked_tiles.size() - 1; i >= 0; --i)
+            if (stacked_tiles[i] == END and i > 0) {
+                stacked_tiles[i-1] = END;
+                return;
+            }
+    }
 
     bool operator==(const WorldElement& other) const { 
         return tileset == other.tileset and stacked_tiles == other.stacked_tiles and animation_steps == other.animation_steps;

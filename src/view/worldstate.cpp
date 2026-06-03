@@ -3,14 +3,20 @@
 constexpr static auto END = WorldElement::END;
 constexpr static auto SKIP = WorldElement::SKIP;
 
+// NOTE: walkable tiles are not elevated, so that stacking tiles with walkable tiles allow walkable behavior (like a box with a box shadow)
 void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
-    for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
+    f32 up_count = 0.0f;
+    for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i) {
         if (elem.stacked_tiles[i] != SKIP)
             iso.draw_tile(
                 elem.tileset[i], 
                 elem.stacked_tiles[i] + elem.anim_step[i], 
-                { position.x - static_cast<f32>(i), position.y - static_cast<f32>(i) }
+                (elem.is_walkable())
+                  ? f32_2{ position.x, position.y }
+                  : f32_2{ position.x - up_count, position.y - up_count }
             );
+        up_count += 1.0f * static_cast<f32>(!elem.is_walkable());
+    }
 }
 
 void WorldState::draw() const {

@@ -140,6 +140,7 @@ int main() {
 
     player_in.set(5, 7);
     worldstate.set(5, 8, El(0, 39));
+    worldstate.set(5, 9, El(0, 44));
     isometric.set_camera({ 5, 7 });
 
     f64 anim_step_time = 0.0f;
