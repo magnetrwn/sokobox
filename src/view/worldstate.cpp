@@ -44,16 +44,19 @@ void WorldState::step_animations() {
 }
 
 void WorldState::step_transitions() {
-    tile_transitions.erase(std::remove_if(tile_transitions.begin(), tile_transitions.end(), [this] (WorldTransition& tran) {
+    for (WorldTransition& tran : tile_transitions) {
         tran.position.x += tran.increment.x;
         tran.position.y += tran.increment.y;
         if (tran.elem.animation_steps)
             tran.elem.anim_step = (tran.elem.anim_step + 1) % tran.elem.animation_steps;
         --tran.anim_steps_left;
-        bool cond = tran.anim_steps_left == 0;
-        if (cond and !tran.on_end.stacked_tiles.empty())
+
+        if (tran.anim_steps_left == 0 and !tran.on_end.stacked_tiles.empty())
             set(tran.end_x, tran.end_y, tran.on_end);
-        return cond;
+    }
+
+    tile_transitions.erase(std::remove_if(tile_transitions.begin(), tile_transitions.end(), [this] (const WorldTransition& tran) {
+        return tran.anim_steps_left == 0;
     }), tile_transitions.end());
 
     if (player_transition.empty())
@@ -62,7 +65,9 @@ void WorldState::step_transitions() {
     player_transition.position.x += player_transition.increment.x;
     player_transition.position.y += player_transition.increment.y;
     player_transition.elem.anim_step = (player_transition.elem.anim_step + 1) % player_transition.elem.animation_steps;
-    if (--player_transition.anim_steps_left == 0) {
+    --player_transition.anim_steps_left;
+    
+    if (player_transition.anim_steps_left == 0) {
         set(player_transition.end_x, player_transition.end_y, player_transition.on_end);
         player_transition.clear();
     }

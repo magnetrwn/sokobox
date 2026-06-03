@@ -159,6 +159,9 @@ int main() {
 
         worldstate.draw();
 
+        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+            camera_pan_reset_time = -CAMERA_PAN_RESET_DELAY;
+
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             camera_pan_reset_time = GetTime();
             isometric.update_pos(GetMouseDelta());
