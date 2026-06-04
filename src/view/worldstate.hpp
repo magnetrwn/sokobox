@@ -138,8 +138,9 @@ struct WorldElement {
     }
 
     void pop_end() {
-        for (i64 i = stacked_tiles.size() - 1; i >= 0; --i)
-            if (stacked_tiles[i] == END and i > 0) {
+        for (i64 i = 1; i < stacked_tiles.size(); ++i)
+            if (stacked_tiles[i] == END) {
+                stacked_tiles[i] = 0;
                 stacked_tiles[i-1] = END;
                 return;
             }

@@ -48,11 +48,8 @@ void ActionManager::step() {
                 // TraceLog(LOG_INFO, "%d %d", next_pl_walkable.tileset[0], next_pl_walkable.tileset[1]);
             }
 
-            // TODO: fixme
-            if (pl.is_walkable())
-                pl.pop_end();
-            else
-                worldstate.unset(pl_x, pl_y);
+            pl.pop_end();
+            worldstate.set(pl_x, pl_y, pl);
 
             worldstate.move_player(
                 WorldTransition(
