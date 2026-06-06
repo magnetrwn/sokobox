@@ -16,23 +16,53 @@ void ActionManager::step() {
     for (usize i = 0; i < 4; ++i) {
         const usize next_pl_x = pl_x + DIR_OFFSETS[i][0];
         const usize next_pl_y = pl_y + DIR_OFFSETS[i][1];
+        const usize next2_pl_x = pl_x + DIR_OFFSETS[i][0] * 2;
+        const usize next2_pl_y = pl_y + DIR_OFFSETS[i][1] * 2;
         WorldElement pl = worldstate.get(pl_x, pl_y);
         WorldElement next_pl = worldstate.get(next_pl_x, next_pl_y);
+        WorldElement next2_pl;
 
         if (IsKeyDown(DIR_KEYS[i]) and (next_pl.empty() or next_pl.is_movable() or next_pl.is_walkable())) {
             if (next_pl.is_movable()) {
-                if (worldstate.get(next_pl_x + DIR_OFFSETS[i][0], next_pl_y + DIR_OFFSETS[i][1]).empty()) {
+                if (!worldstate.is_oob(next2_pl_x, next2_pl_y))
+                        next2_pl = worldstate.get(next2_pl_x, next2_pl_y);
+                else
+                    continue;
+
+                if (next2_pl.empty()) {
                     worldstate.unset(next_pl_x, next_pl_y);
                     worldstate.move_tile(
                         WorldTransition(
-                            f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) },
-                            pl_x + static_cast<f32>(DIR_OFFSETS[i][0]) * 2, 
-                            pl_y + static_cast<f32>(DIR_OFFSETS[i][1]) * 2,
+                            f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) }, 
+                            static_cast<f32>(next2_pl_x), 
+                            static_cast<f32>(next2_pl_y),
                             f32_2{ 
                                 static_cast<f32>(DIR_OFFSETS[i][0]) * INV_STEPS, 
                                 static_cast<f32>(DIR_OFFSETS[i][1]) * INV_STEPS 
                             },
                             next_pl, next_pl, STEPS
+                        )
+                    );
+                }
+
+                else if (next2_pl.is_walkable()) {
+                    WorldElement next2_pl_walkable;
+                    next2_pl_walkable = next2_pl;
+                    next2_pl_walkable.push_end(next_pl);
+
+                    worldstate.unset(next_pl_x, next_pl_y);
+                    worldstate.move_tile(
+                        WorldTransition(
+                            f32_2{ static_cast<f32>(next_pl_x), static_cast<f32>(next_pl_y) }, 
+                            static_cast<f32>(next2_pl_x), 
+                            static_cast<f32>(next2_pl_y),
+                            f32_2{ 
+                                static_cast<f32>(DIR_OFFSETS[i][0]) * INV_STEPS, 
+                                static_cast<f32>(DIR_OFFSETS[i][1]) * INV_STEPS 
+                            },
+                            next_pl,
+                            next2_pl_walkable, 
+                            STEPS
                         )
                     );
                 }
@@ -45,7 +75,6 @@ void ActionManager::step() {
             if (next_pl.is_walkable()) {
                 next_pl_walkable = next_pl;
                 next_pl_walkable.push_end(El::PLAYER_IDLE());
-                // TraceLog(LOG_INFO, "%d %d", next_pl_walkable.tileset[0], next_pl_walkable.tileset[1]);
             }
 
             pl.pop_end();

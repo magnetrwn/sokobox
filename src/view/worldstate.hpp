@@ -77,14 +77,14 @@ struct WorldElement {
 
     // TODO: turn to "in set" when refactoring to avoid magic
     bool is_movable(usize idx = 0) const {
-        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_player(idx+1))) and (
+        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END) and (
             stacked_tiles[idx] == 35 or stacked_tiles[idx] == 36 or stacked_tiles[idx] == 37 or stacked_tiles[idx] == 38 or stacked_tiles[idx] == 39
         ));
     }
 
     // TODO: turn to "in set" when refactoring to avoid magic
     bool is_walkable(usize idx = 0) const {
-        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END or (stacked_tiles[idx+2] == END and is_player(idx+1))) and (
+        return (tileset[idx] == 0 and (stacked_tiles[idx+1] == END) and (
             stacked_tiles[idx] == 40 or stacked_tiles[idx] == 41 or stacked_tiles[idx] == 42 or stacked_tiles[idx] == 43 or stacked_tiles[idx] == 44 or
             stacked_tiles[idx] == 50 or stacked_tiles[idx] == 51 or stacked_tiles[idx] == 52 or stacked_tiles[idx] == 53 or stacked_tiles[idx] == 54
         ));
@@ -214,6 +214,7 @@ public:
     void move_tile(WorldTransition tran) { tile_transitions.push_back(tran); }
     bool is_tile_moving() const { return tile_transitions.size() != 0; }
 
+    bool is_oob(usize x, usize y) const { return x >= width() and y >= height(); }
     WorldElement get(usize x, usize y) const { return world[y * w + x]; }
     
     usize width() const { return w; }

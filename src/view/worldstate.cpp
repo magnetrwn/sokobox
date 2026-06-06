@@ -11,7 +11,7 @@ void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const
             iso.draw_tile(
                 elem.tileset[i], 
                 elem.stacked_tiles[i] + elem.anim_step[i], 
-                (elem.is_walkable())
+                (elem.is_walkable(i) or elem.is_player(i))
                   ? f32_2{ position.x, position.y }
                   : f32_2{ position.x - up_count, position.y - up_count }
             );
