@@ -12,7 +12,7 @@ make -j$(nproc)
 mv compile_commands.json ../
 
 rm sokobox.zip || true
-zip -r9 sokobox.zip sokobox sokobox.ini res
+# zip -r9 sokobox.zip sokobox sokobox.ini res
 
 ./sokobox
 cd ..

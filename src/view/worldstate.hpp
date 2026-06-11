@@ -90,6 +90,16 @@ struct WorldElement {
         ));
     }
 
+    // TODO: turn to "in set" when refactoring to avoid magic
+    bool is_walkable_movable_stack(usize idx = 0) const {
+        return (tileset[idx] == 0 and tileset[idx+1] == 0 and stacked_tiles[idx+2] == END) and (
+            stacked_tiles[idx] == 40 or stacked_tiles[idx] == 41 or stacked_tiles[idx] == 42 or stacked_tiles[idx] == 43 or stacked_tiles[idx] == 44 or
+            stacked_tiles[idx] == 50 or stacked_tiles[idx] == 51 or stacked_tiles[idx] == 52 or stacked_tiles[idx] == 53 or stacked_tiles[idx] == 54
+        ) and (
+            stacked_tiles[idx+1] == 35 or stacked_tiles[idx+1] == 36 or stacked_tiles[idx+1] == 37 or stacked_tiles[idx+1] == 38 or stacked_tiles[idx+1] == 39
+        );
+    }
+
     void push_front(const WorldElement& other) {
         if (stacked_tiles[stacked_tiles.size() - 1] == END)
             stacked_tiles[stacked_tiles.size() - 2] = END;
