@@ -1,3 +1,6 @@
 [submodule "lib/inipp"]
 	path = lib/inipp
 	url = https://github.com/mcmtroffaes/inipp.git
+[submodule "lib/raylib"]
+	path = lib/raylib
+	url = https://github.com/raysan5/raylib.git
