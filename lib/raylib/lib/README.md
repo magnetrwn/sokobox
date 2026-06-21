@@ -1,1 +1,0 @@
-Place `libraylib.a` here. You can source it from the latest Raylib release.

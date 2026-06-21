@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include "atlas.hpp"
 #include "isoview.hpp"
-#include "worldstate.hpp"
+#include "world.hpp"
 #include "util.hpp"
 #include "actionmgr.hpp"
 
@@ -56,54 +56,54 @@ int main() {
     isometric.load(atlas_static, TILES_SCALE / S_ITEMS_SZ);
     isometric.load(atlas_player, TILES_SCALE / PLAYER_SZ);
 
-    WorldState worldstate(LEVEL_W, LEVEL_H, isometric);
+    World world(LEVEL_W, LEVEL_H, isometric);
 
-    ActionManager player_in(worldstate);
+    ActionManager player_in(world);
 
     // Edge boxes
     // for (usize x = 0; x < LEVEL_W; ++x)
     //     for (usize y = 0; y < LEVEL_H; ++y)
     //         if (x == 0 or x == LEVEL_W - 1 or y == 0 or y == LEVEL_H - 1)
-    //             worldstate.set(x, y, El(0, util::randi(0, 11)));
+    //             world.set(x, y, El(0, util::randi(0, 11)));
 
     // Edge boxes (small borders)
     for (usize x = 0; x < LEVEL_W; ++x)
-        worldstate.set(x, 0, El(0, 22));
+        world.set(x, 0, El(0, 22));
     for (usize y = 0; y < LEVEL_H; ++y)
-        worldstate.set(0, y, El(0, 23));
+        world.set(0, y, El(0, 23));
     for (usize x = 0; x < LEVEL_W; ++x)
-        worldstate.set(x, LEVEL_H - 1, El(0, 28));
+        world.set(x, LEVEL_H - 1, El(0, 28));
     for (usize y = 0; y < LEVEL_H; ++y)
-        worldstate.set(LEVEL_W - 1, y, El(0, 29));
-    worldstate.set(0, 0, El(0, 24));
-    worldstate.set(0, LEVEL_H - 1, El(0, 30));
-    worldstate.set(LEVEL_W - 1, 0, El(0, 31));
-    worldstate.set(LEVEL_W - 1, LEVEL_H - 1, El(0, 25));
+        world.set(LEVEL_W - 1, y, El(0, 29));
+    world.set(0, 0, El(0, 24));
+    world.set(0, LEVEL_H - 1, El(0, 30));
+    world.set(LEVEL_W - 1, 0, El(0, 31));
+    world.set(LEVEL_W - 1, LEVEL_H - 1, El(0, 25));
     
     // Crates
-    /*worldstate.set(4, 2, El(0, 15));
-    worldstate.set(4, 3, El(0, 15));
-    worldstate.set(6, 5, El(0, 15));
+    /*world.set(4, 2, El(0, 15));
+    world.set(4, 3, El(0, 15));
+    world.set(6, 5, El(0, 15));
 
     // Tall box on top of crate
-    worldstate.set(5, 6, El(0, { 15, 19, SKIP, 14, END }));
+    world.set(5, 6, El(0, { 15, 19, SKIP, 14, END }));
 
     // Stack of boxes
-    worldstate.set(1, 7, El(0, { 9, 19, 9, 7, END }));
+    world.set(1, 7, El(0, { 9, 19, 9, 7, END }));
 
     // Angled boxes
-    worldstate.set(6, 6, El(0, 10));
-    worldstate.set(1, 4, El(0, 11));
+    world.set(6, 6, El(0, 10));
+    world.set(1, 4, El(0, 11));
 
     // Opened boxes
-    worldstate.set(1, 1, El(0, 24));
-    worldstate.set(1, 3, El(0, 24));
-    worldstate.set(8, 2, El(0, 24));
+    world.set(1, 1, El(0, 24));
+    world.set(1, 3, El(0, 24));
+    world.set(8, 2, El(0, 24));
 
     // Animated objects
-    worldstate.set(7, 1, El(1, 8, 6));
-    worldstate.set(3, 5, El(1, 112, 8));
-    worldstate.set(7, 7, El(1, 72, 8));*/
+    world.set(7, 1, El(1, 8, 6));
+    world.set(3, 5, El(1, 112, 8));
+    world.set(7, 7, El(1, 72, 8));*/
 
     // Generate random level
     for (usize i = LEVEL_W + 1; i < LEVEL_W * LEVEL_H - LEVEL_W - 1; ++i) {
@@ -112,35 +112,35 @@ int main() {
             continue;
 
         if (i % 6 == 0) {
-            worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, 8));
+            world.set(i % LEVEL_W, i / LEVEL_H, El(0, 8));
             continue;
         }
         
         rnd = util::randi(-1, 24);
         if (rnd != -1 and rnd != 19 and rnd != 14) {
-            worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, rnd));
+            world.set(i % LEVEL_W, i / LEVEL_H, El(0, rnd));
             continue;
         }
 
         if (rnd == 14 or rnd == 19) {
-            worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0 }, { 19, SKIP, 14, END }));
+            world.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0 }, { 19, SKIP, 14, END }));
             continue;
         }
 
         rnd = util::randi(-1, 6);
         switch(rnd) {
-            case 0: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 8, 6)); break;
-            case 1: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 112, 8)); break;
-            case 2: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(1, 72, 8)); break;
-            case 3: worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 15, 19, SKIP, 14, END })); break;
-            case 4: worldstate.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 9, 0, 9, 7, END })); break;
-            default: worldstate.set(i % LEVEL_W, i / LEVEL_H, El(0, util::randi(35, 54))); break;
+            case 0: world.set(i % LEVEL_W, i / LEVEL_H, El(1, 8, 6)); break;
+            case 1: world.set(i % LEVEL_W, i / LEVEL_H, El(1, 112, 8)); break;
+            case 2: world.set(i % LEVEL_W, i / LEVEL_H, El(1, 72, 8)); break;
+            case 3: world.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 15, 19, SKIP, 14, END })); break;
+            case 4: world.set(i % LEVEL_W, i / LEVEL_H, El({ 0, 0, 0, 0 }, { 9, 0, 9, 7, END })); break;
+            default: world.set(i % LEVEL_W, i / LEVEL_H, El(0, util::randi(35, 54))); break;
         }
     }
 
     player_in.set(5, 7);
-    worldstate.set(5, 8, El(0, 39));
-    worldstate.set(5, 9, El(0, 44));
+    world.set(5, 8, El(0, 39));
+    world.set(5, 9, El(0, 44));
     isometric.set_camera({ 5, 7 });
 
     f64 anim_step_time = 0.0f;
@@ -158,7 +158,7 @@ int main() {
         BeginDrawing();
         ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
 
-        worldstate.draw();
+        world.draw();
 
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
             camera_pan_reset_time = -CAMERA_PAN_RESET_DELAY;
@@ -179,12 +179,12 @@ int main() {
 
         if (GetTime() > anim_step_time + anim_step_delay * (IsKeyDown(KEY_LEFT_SHIFT) ? 0.5f : 1.0f)) {
             anim_step_time = GetTime();
-            worldstate.step_animations();
+            world.step_animations();
         }
 
         if (GetTime() > tran_step_time + tran_step_delay * (IsKeyDown(KEY_LEFT_SHIFT) ? 0.5f : 1.0f)) {
             tran_step_time = GetTime();
-            worldstate.step_transitions();
+            world.step_transitions();
         }
 
         DrawText(std::to_string(GetFPS()).c_str(), 10, 10, 18, RAYWHITE);

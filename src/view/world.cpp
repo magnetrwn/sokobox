@@ -1,10 +1,10 @@
-#include "worldstate.hpp"
+#include "world.hpp"
 
 constexpr static auto END = WorldElement::END;
 constexpr static auto SKIP = WorldElement::SKIP;
 
 // NOTE: walkable tiles are not elevated, so that stacking tiles with walkable tiles allow walkable behavior (like a box with a box shadow)
-void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
+void World::draw_tile_stack(const WorldElement& elem, f32_2 position) const {
     f32 up_count = 0.0f;
     for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i) {
         if (elem.stacked_tiles[i] != SKIP)
@@ -19,7 +19,7 @@ void WorldState::draw_tile_stack(const WorldElement& elem, f32_2 position) const
     }
 }
 
-void WorldState::draw() const {
+void World::draw() const {
     for (i64 sum = 0; sum < w + h - 1; ++sum)
         for (i64 x = 0; x < w; ++x) {
             i64 y = sum - x;
@@ -41,7 +41,7 @@ void WorldState::draw() const {
         }
 }
 
-void WorldState::step_animations() {
+void World::step_animations() {
     for (WorldElement& elem : world)
         for (i64 i = 0; i < elem.stacked_tiles.size() and elem.stacked_tiles[i] != END; ++i)
             if (elem.stacked_tiles[i] != SKIP) {
@@ -51,7 +51,7 @@ void WorldState::step_animations() {
             }
 }
 
-void WorldState::step_transitions() {
+void World::step_transitions() {
     for (WorldTransition& tran : tile_transitions) {
         for (i64 i = 0; i < tran.elem.stacked_tiles.size() and tran.elem.stacked_tiles[i] != END; ++i)
             if (tran.elem.stacked_tiles[i] != SKIP) {

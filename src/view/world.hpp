@@ -1,5 +1,5 @@
-#ifndef WORLDVIEW_HPP_
-#define WORLDVIEW_HPP_
+#ifndef WORLD_HPP_
+#define WORLD_HPP_
 
 #include <algorithm>
 #include <vector>
@@ -202,7 +202,7 @@ struct WorldTransition {
     void clear() { elem = WorldElement(); }
 };
 
-class WorldState {
+class World {
 private:
     std::vector<WorldElement> world;
     std::vector<WorldTransition> tile_transitions;
@@ -213,7 +213,7 @@ private:
     void draw_tile_stack(const WorldElement& elem, f32_2 position) const;
 
 public:
-    WorldState(usize width, usize height, IsometricView& iso) : w(width), h(height), iso(iso), world(width * height) {}
+    World(usize width, usize height, IsometricView& iso) : w(width), h(height), iso(iso), world(width * height) {}
 
     void set(usize x, usize y, WorldElement elem) { world[y * w + x] = elem; }
     void unset(usize x, usize y) { world[y * w + x] = WorldElement(); }
