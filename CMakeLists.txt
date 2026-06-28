@@ -10,10 +10,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories(${CMAKE_SOURCE_DIR}/lib/raylib/include)
 link_directories(${CMAKE_SOURCE_DIR}/lib/raylib/build)
-
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
-add_subdirectory(${CMAKE_SOURCE_DIR}/lib/inipp)
 
 add_compile_options(-Wall -Wextra -Wpedantic)
 
-target_link_libraries(sokobox PRIVATE "${CMAKE_SOURCE_DIR}/lib/raylib/build/raylib/libraylib.a")
+target_link_libraries(sokobox PRIVATE "${CMAKE_SOURCE_DIR}/lib/raylib/build/raylib/libraylib.a" zstd)

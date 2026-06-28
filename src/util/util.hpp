@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <unistd.h>
 #include <raylib.h>
-#include <inipp.h>
+#include <inipp/inipp.h>
 
 #include "typedef.hpp"
 

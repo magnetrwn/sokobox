@@ -4,9 +4,17 @@
 #include <algorithm>
 #include <vector>
 #include <array>
+#include <fstream>
+
 #include "isoview.hpp"
 #include "typedef.hpp"
 #include "util.hpp"
+
+#include "cereal/types/vector.hpp"
+#include "cereal/types/array.hpp"
+#include "cereal/archives/binary.hpp"
+
+#include "bxzstr/bxzstr.hpp"
 
 using u8_8 = std::array<u8, 8>;
 
@@ -162,6 +170,8 @@ struct WorldElement {
     
     bool operator!=(const WorldElement& other) const { return !(*this == other); }
     bool empty() const { return stacked_tiles[0] == END; }
+
+    template<class Archive> void serialize(Archive& ar) { ar(stacked_tiles, tileset, animation_steps); }
 };
 
 struct WorldTransition {
@@ -238,6 +248,8 @@ public:
     void draw() const; 
     void step_animations();
     void step_transitions();
+
+    template<class Archive> void serialize(Archive& ar) { ar(w, h, world); }
 };
 
 using El = WorldElement::WorldElementInit;

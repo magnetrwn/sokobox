@@ -12,6 +12,7 @@
     return path.substr(0, path.rfind('/') + 1);
 }*/
 
+// TODO: this parses the file every time it is called, reasonable?
 std::string util::cfg_string(const std::string& section, const std::string& key) {
     inipp::Ini<char> ini;
     std::ifstream is(SETTINGS_FILE);

@@ -4,6 +4,7 @@
 #include "world.hpp"
 #include "util.hpp"
 #include "actionmgr.hpp"
+#include "serializer.hpp"
 
 int main() {
     constexpr static auto END = WorldElement::END;
@@ -138,6 +139,8 @@ int main() {
         }
     }
 
+    // WorldSerializer::load("level1.bin", world);
+
     player_in.set(5, 7);
     world.set(5, 8, El(0, 39));
     world.set(5, 9, El(0, 44));
@@ -156,7 +159,8 @@ int main() {
         player_in.step();
 
         BeginDrawing();
-        ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
+        // ClearBackground(Color{ 0x27, 0x28, 0x22, 0xff });
+        ClearBackground(Color{ 0x3a, 0x44, 0x66, 0xff });
 
         world.draw();
 

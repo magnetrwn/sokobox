@@ -6,6 +6,7 @@ target_include_directories(sokobox PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/view
     ${CMAKE_CURRENT_SOURCE_DIR}/util
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib inipp)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
